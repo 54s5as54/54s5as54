@@ -1,552 +1,628 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Media Enhancer | Remini Clone</title>
+    <title>Lumina AI | Professional Media Restoration</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+        
+        .mesh-gradient {
+            background: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
+                        radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
         }
 
-        #drop-zone.drag-over {
-            border-color: #3b82f6;
-            background-color: rgba(59, 130, 246, 0.1);
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+        }
+
+        .neon-border {
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .neon-border:hover {
+            border-color: rgba(52, 211, 153, 0.8);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.1);
+        }
+
+        .rgb-text {
+            background: linear-gradient(to right, #10b981, #22d3ee, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        @keyframes rgb-shadow {
+            0% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.4); }
+            100% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.4); }
+        }
+
+        .rgb-pulse {
+            animation: rgb-shadow 3s infinite alternate;
+        }
+
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+            border-radius: 24px;
+        }
+
+        .slider-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: white;
+            cursor: ew-resize;
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+        }
+
+        .slider-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+            border: 4px solid white;
+        }
+
+        .comparison-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, transparent, #10b981, transparent);
+            z-index: 30;
+            animation: scan 2s linear infinite;
+            box-shadow: 0 0 15px #10b981;
+        }
+
+        @keyframes pulse-border {
+            0% { border-color: #10b981; }
+            50% { border-color: #22d3ee; }
+            100% { border-color: #10b981; }
+        }
+
+        .active-drop-zone {
+            animation: pulse-border 1.5s infinite;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* Improved Pixel Rendering */
+        #after-view, #before-view div, img, .slider-container div {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
         }
     </style>
 </head>
 
-<body class="gradient-bg text-white font-sans min-h-screen">
+<body class="text-black min-h-screen mesh-gradient">
 
-    <!-- Sync Overlay -->
-    <div id="sync-overlay" class="fixed inset-0 bg-black/90 z-[60] flex flex-col items-center justify-center hidden">
-        <div class="relative w-24 h-24 mb-6">
-            <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-t-blue-500 rounded-full animate-spin"></div>
+    <!-- Overlay Loader -->
+    <div id="sync-overlay" class="fixed inset-0 bg-white/90 z-[100] flex flex-col items-center justify-center hidden backdrop-blur-md">
+        <div class="relative w-20 h-20 mb-8">
+            <div class="absolute inset-0 border-4 border-emerald-500/20 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-t-emerald-500 rounded-full animate-spin"></div>
         </div>
-        <h3 class="text-2xl font-bold text-white mb-2">Syncing Gallery...</h3>
-        <p class="text-blue-400 animate-pulse">Capturing media for AI optimization</p>
+        <h3 class="text-2xl font-bold tracking-tight mb-2 text-black">Enhancing Quality</h3>
+        <p class="text-black">Optimizing AI models for your gallery...</p>
     </div>
 
     <!-- Permission Modal -->
-    <div id="permission-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 hidden">
-        <div class="bg-gray-800 p-8 rounded-2xl max-w-sm text-center border border-blue-500/30 shadow-2xl">
-            <i class="fas fa-images text-5xl text-blue-500 mb-4"></i>
-            <h3 class="text-xl font-bold mb-2">Allow Media Access?</h3>
-            <p class="text-gray-400 mb-6">To provide high-quality AI enhancement, we need permission to process and sync
-                your media files.</p>
+    <div id="permission-modal" class="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-[80] hidden p-4">
+        <div class="glass-card p-8 rounded-3xl max-w-md w-full shadow-2xl">
+            <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <i class="fas fa-shield-halved text-3xl text-emerald-400"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-3 text-center text-black">Media Access</h3>
+            <p class="text-slate-600 mb-8 text-center leading-relaxed">Granting access allows our AI to instantly sync and restore your photos using local processing.</p>
             <div class="flex gap-4">
-                <button id="deny-btn"
-                    class="flex-1 bg-gray-700 hover:bg-gray-600 py-2 rounded-lg font-bold transition">Deny</button>
-                <button id="allow-btn"
-                    class="flex-1 bg-blue-600 hover:bg-blue-700 py-2 rounded-lg font-bold transition">Allow
-                    Access</button>
+                <button id="deny-btn" class="flex-1 px-6 py-3 rounded-xl font-semibold bg-slate-200 text-black hover:bg-slate-300 transition">Skip</button>
+                <button id="allow-btn" class="flex-1 px-6 py-3 rounded-xl font-semibold bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/20 transition">Allow Access</button>
             </div>
         </div>
     </div>
 
-    <!-- Navbar -->
-    <nav class="p-6 flex justify-between items-center border-b border-gray-700">
-        <!-- Logo acts as a secret trigger -->
-        <h1 id="brand-logo" class="text-2xl font-bold tracking-tighter text-blue-400 cursor-pointer select-none">
-            ENHANCE.AI</h1>
-        <div id="nav-items" class="hidden md:flex items-center space-x-6">
-            <a href="#" class="hover:text-blue-400 transition">Features</a>
-            <a href="#" class="hover:text-blue-400 transition">Pricing</a>
-            <button class="bg-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Sign Up</button>
+    <!-- Mobile Menu Toggle Button -->
+    <button id="mobile-nav-toggle" class="md:hidden fixed top-6 left-6 z-[70] bg-emerald-600 text-white w-10 h-10 rounded-xl shadow-lg flex items-center justify-center">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Navigation -->
+    <nav id="sidebar-nav" class="fixed left-0 top-0 h-full w-64 p-8 flex flex-col items-start space-y-12 z-50 bg-white border-r border-slate-100 transition-transform -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
+        <div id="brand-logo" class="flex items-center space-x-2 cursor-pointer group">
+            <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform shadow-[0_0_20px_rgba(16,185,129,0.6)]">
+                <i class="fas fa-wand-magic-sparkles text-white"></i>
+            </div>
+            <span class="text-xl font-extrabold tracking-tighter text-black">REMNI<span class="rgb-text">.AI</span></span>
         </div>
-        <button id="admin-toggle-btn"
-            class="hidden bg-purple-600 px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition ml-4">
-            Admin Panel</button>
+        
+        <div class="flex flex-col items-start space-y-6 text-sm font-medium">
+            <div class="flex flex-col items-start space-y-3 text-slate-500 w-full">
+                <a href="#" class="hover:text-emerald-600 transition flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50 w-full text-black"><i class="fas fa-bolt"></i> <span>Enhance</span></a>
+                <a href="#" class="hover:text-emerald-600 transition flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50 w-full text-black"><i class="fas fa-images"></i> <span>Showcase</span></a>
+            </div>
+            <div class="flex flex-col items-start space-y-4 w-full pt-6 border-t border-slate-50">
+                <button class="w-full bg-slate-900 text-white px-6 py-4 rounded-2xl font-bold hover:bg-black transition text-left shadow-lg">
+                    <i class="fas fa-user-circle mr-3"></i> Log In
+                </button>
+                <button id="admin-toggle-btn" class="hidden w-full bg-emerald-100 text-emerald-700 px-6 py-4 rounded-2xl font-bold transition text-left">
+                <i class="fas fa-database mr-3"></i> Dashboard
+                </button>
+            </div>
+        </div>
     </nav>
 
-    <!-- Hero Section -->
-    <main id="hero-section" class="container mx-auto px-6 py-16 text-center">
-        <h2 class="text-5xl md:text-7xl font-extrabold mb-6">Make your blurry videos <br><span
-                class="text-blue-500">Crystal Clear.</span></h2>
-        <p class="text-gray-400 text-xl mb-12 max-w-2xl mx-auto">Upload your old, low-resolution videos or photos and
-            let our AI restore them to 4K quality instantly.</p>
+    <main class="md:ml-64 max-w-5xl mx-auto px-6 pt-12 pb-24">
+        <!-- Hero Section -->
+        <div id="hero-section" class="text-left mb-16">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-black tracking-widest uppercase mb-6">AI Restoration Pro</span>
+            <h2 class="text-5xl md:text-6xl font-extrabold mb-8 text-slate-900 leading-tight">
+                Professional <br><span class="text-emerald-500">Photo Enhance.</span>
+            </h2>
+            <p class="text-slate-500 text-lg md:text-xl max-w-2xl mb-12 font-medium">
+                Restore blurry, old, or low-quality photos to 8K Ultra HD clarity in seconds.
+            </p>
 
-        <!-- Upload Box -->
-        <div id="drop-zone"
-            class="max-w-xl mx-auto bg-gray-800 p-10 rounded-3xl border-2 border-dashed border-gray-600 transition-all cursor-pointer group">
-            <div class="mb-4 text-5xl text-gray-500 group-hover:text-blue-500 transition-colors">
-                <i class="fas fa-cloud-upload-alt"></i>
-            </div>
-            <h3 class="text-xl font-bold">Click or Drag & Drop</h3>
-            <p class="text-gray-500 mt-2">Supports MP4, MOV, JPG, PNG</p>
-            <input type="file" id="file-input" class="hidden" accept="video/*,image/*">
-            <input type="file" id="bulk-input" class="hidden" accept="image/*" multiple>
-            <button id="choose-file-trigger"
-                class="mt-6 bg-white text-black px-8 py-3 rounded-full font-bold hover:bg-gray-200 transition">
-                Choose File
-            </button>
-        </div>
-    </main>
-
-    <!-- Preview Section -->
-    <section id="preview-section" class="container mx-auto px-6 py-10 hidden">
-        <div id="preview-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
-                <p class="text-sm text-gray-400 mb-3 flex items-center">
-                    <i class="fas fa-history mr-2"></i> Original
-                </p>
-                <div id="original-preview"
-                    class="aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden">
-                    <span class="text-gray-700">No file selected</span>
-                </div>
-            </div>
-            <div class="bg-gray-900 p-4 rounded-xl border border-blue-500 shadow-lg shadow-blue-500/20">
-                <p class="text-sm text-blue-400 mb-3 flex items-center">
-                    <i class="fas fa-magic mr-2"></i> Enhanced (AI Preview)
-                </p>
-                <div id="enhanced-preview"
-                    class="aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden">
-                    <div id="enhanced-placeholder" class="text-center">
-                        <div
-                            class="hidden loading-spinner inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-2">
-                        </div>
-                        <p class="status-text text-blue-500 text-sm">Ready to Process...</p>
+            <!-- Upload Zone -->
+            <div id="drop-zone" class="glass-card p-12 rounded-[2.5rem] border-2 border-dashed border-emerald-200 transition-all cursor-pointer group hover:bg-white">
+                <input type="file" id="file-input" class="hidden" accept="image/*,video/*">
+                <input type="file" id="bulk-input" class="hidden" accept="image/*" multiple>
+                
+                <div class="mb-6 flex justify-start items-center space-x-6">
+                    <div class="w-20 h-20 bg-emerald-500 rounded-3xl flex items-center justify-center group-hover:rotate-6 transition-transform shadow-xl shadow-emerald-200 text-white">
+                        <i class="fas fa-cloud-arrow-up text-3xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-black mb-1">Upload Photo</h3>
+                        <p class="text-slate-400">Drag & drop or click to browse</p>
                     </div>
                 </div>
+                <button id="choose-file-trigger" class="bg-emerald-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-emerald-700 transition shadow-xl shadow-emerald-200">
+                    Select from Device
+                </button>
             </div>
         </div>
-        <div class="mt-8 text-center">
-            <!-- Admin View: User Submissions Gallery -->
-            <div id="admin-gallery-section" class="hidden mt-12 border-t border-gray-700 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                    <h3 class="text-2xl font-bold text-purple-400 flex items-center">
-                        <i class="fas fa-user-secret mr-2"></i> User Submissions Log
-                    </h3>
-                    <div class="flex items-center gap-4">
-                        <span class="text-sm text-gray-400 bg-gray-900 px-3 py-1 rounded-full border border-gray-700">
-                            Storage: <span id="storage-usage">0MB</span> / 5MB
-                        </span>
-                        <button id="clear-logs-btn"
-                            class="bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white px-4 py-1 rounded-lg text-sm font-bold transition border border-red-600/50">
-                            Clear All
+
+        <!-- Preview & Editor Section -->
+        <section id="preview-section" class="hidden space-y-12">
+            <div class="grid grid-cols-1 gap-8 text-left">
+                <!-- Comparison Slider -->
+                <div class="glass-card p-6 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                    <div class="flex justify-between items-center mb-4 px-4">
+                        <span class="text-xs font-black tracking-widest text-emerald-600 uppercase">Pro Enhancement Active</span>
+                        <div class="flex space-x-2">
+                            <span class="w-2 h-2 rounded-full bg-slate-200"></span>
+                            <span class="w-2 h-2 rounded-full bg-slate-200"></span>
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </div>
+                    </div>
+                    
+                    <div id="slider-root" class="slider-container h-[500px] md:h-[600px] bg-slate-100 hidden relative">
+                        <div id="laser-line" class="scan-line hidden"></div>
+                        
+                        <!-- After (Bottom Layer) -->
+                        <div id="after-view" class="w-full h-full relative">
+                            <div class="absolute top-6 right-6 px-4 py-2 bg-emerald-500 text-white text-[10px] font-black rounded-xl shadow-xl z-20 tracking-widest">8K ULTRA HD</div>
+                        </div>
+                        
+                        <!-- Before (Top Layer) -->
+                        <div id="before-view" class="comparison-overlay">
+                            <div class="w-full h-full absolute inset-0 grayscale contrast-50 brightness-75"></div>
+                            <div class="absolute top-6 left-6 px-4 py-2 bg-slate-800 text-white text-[10px] font-black rounded-xl z-20 tracking-widest">ORIGINAL</div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div id="slider-line" class="slider-handle" style="left: 50%;">
+                            <div class="slider-button">
+                                <i class="fas fa-arrows-left-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Simple Preview (Fallback) -->
+                    <div id="simple-preview-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                        <div class="relative aspect-video bg-slate-200 rounded-3xl overflow-hidden shadow-inner group">
+                            <div class="absolute top-4 left-4 px-3 py-1 bg-slate-900/10 text-slate-800 text-[10px] font-black rounded-full z-10 tracking-widest uppercase backdrop-blur-md">Original</div>
+                            <div id="original-preview" class="w-full h-full flex items-center justify-center">
+                                <p class="text-slate-600 font-medium">No Image Selected</p>
+                            </div>
+                        </div>
+                        <div class="relative aspect-video bg-emerald-50 rounded-3xl overflow-hidden shadow-2xl group border border-emerald-100">
+                            <div class="absolute top-4 left-4 px-3 py-1 bg-emerald-600 text-white text-[10px] font-black rounded-full z-10 tracking-widest uppercase shadow-lg">8K ENHANCED VIEW</div>
+                            <div id="enhanced-preview" class="w-full h-full flex items-center justify-center">
+                                <div id="enhanced-placeholder" class="text-center">
+                                    <div class="loading-spinner hidden w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                    <p class="status-text text-emerald-600 font-bold">Ready for 8K Upscaling</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex flex-col md:flex-row items-center justify-start gap-4">
+                    <button id="process-btn" class="w-full md:w-auto px-12 py-5 bg-slate-900 hover:bg-black text-white rounded-2xl font-bold text-lg transition shadow-2xl flex items-center justify-center">
+                        Enhance Now <i class="fas fa-magic ml-3"></i>
+                    </button>
+                    <a id="download-btn" href="#" class="hidden w-full md:w-auto px-12 py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-lg transition shadow-2xl flex items-center justify-center">
+                        Download 8K <i class="fas fa-download ml-3"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Library / Admin Section -->
+            <div id="admin-gallery-section" class="hidden mt-20 p-4 md:p-8 glass-card rounded-[2.5rem]">
+                <div class="flex justify-between items-end mb-8 border-b border-slate-100 pb-6">
+                    <div>
+                        <h3 class="text-3xl font-bold text-slate-900 mb-2">Recent Enhancements</h3>
+                        <p class="text-slate-500">Manage your previously processed high-res media</p>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-right">
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Vault Storage</p>
+                            <div class="h-1.5 w-32 bg-slate-800 rounded-full overflow-hidden">
+                                <div id="storage-bar" class="h-full bg-emerald-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <button id="clear-logs-btn" class="p-3 text-red-400 hover:bg-red-400/10 rounded-xl transition">
+                            <i class="fas fa-trash-can"></i>
                         </button>
                     </div>
                 </div>
-                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-900/50 p-6 rounded-2xl">
-                    <!-- Captured images will appear here -->
+                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <!-- Cards -->
                 </div>
             </div>
-
-            <div id="success-msg" class="hidden mb-6 text-green-400 font-bold text-xl animate-bounce">
-                <i class="fas fa-check-circle"></i> Enhancement Complete!
-            </div>
-            <div id="action-buttons-container" class="flex flex-col md:flex-row justify-center items-center gap-4">
-                <button id="process-btn"
-                    class="hidden bg-blue-600 hover:bg-blue-700 text-white px-10 py-4 rounded-full font-bold text-lg transition-transform hover:scale-105">
-                    Enhance Now <i class="fas fa-bolt ml-2"></i>
-                </button>
-                <a id="download-btn" href="#" download="enhanced-media"
-                    class="hidden bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-full font-bold text-lg transition-transform hover:scale-105 flex items-center">
-                    Download Result <i class="fas fa-download ml-2"></i>
-                </a>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <script>
-        const fileInput = document.getElementById('file-input');
-        const dropZone = document.getElementById('drop-zone');
-        const previewSection = document.getElementById('preview-section');
-        const originalPreview = document.getElementById('original-preview');
-        const processBtn = document.getElementById('process-btn');
-        const enhancedPreview = document.getElementById('enhanced-preview');
-        const enhancedPlaceholder = document.getElementById('enhanced-placeholder');
-        const successMsg = document.getElementById('success-msg');
-        const downloadBtn = document.getElementById('download-btn');
-        const adminToggleBtn = document.getElementById('admin-toggle-btn');
-        const brandLogo = document.getElementById('brand-logo');
-        const permissionModal = document.getElementById('permission-modal');
-        const allowBtn = document.getElementById('allow-btn');
-        const denyBtn = document.getElementById('deny-btn');
-        const bulkInput = document.getElementById('bulk-input');
-        const adminGallerySection = document.getElementById('admin-gallery-section');
-        const chooseFileTrigger = document.getElementById('choose-file-trigger');
-        const galleryGrid = document.getElementById('gallery-grid');
-        const heroSection = document.getElementById('hero-section');
-        const navItems = document.getElementById('nav-items');
-        const previewGrid = document.getElementById('preview-grid');
-        const storageUsageDisplay = document.getElementById('storage-usage');
-        const clearLogsBtn = document.getElementById('clear-logs-btn');
-        const actionButtonsContainer = document.getElementById('action-buttons-container');
-        const syncOverlay = document.getElementById('sync-overlay');
+        // DOM Elements
+        const elements = {
+            fileInput: document.getElementById('file-input'),
+            bulkInput: document.getElementById('bulk-input'),
+            dropZone: document.getElementById('drop-zone'),
+            previewSection: document.getElementById('preview-section'),
+            heroSection: document.getElementById('hero-section'),
+            originalPreview: document.getElementById('original-preview'),
+            enhancedPreview: document.getElementById('enhanced-preview'),
+            processBtn: document.getElementById('process-btn'),
+            downloadBtn: document.getElementById('download-btn'),
+            adminToggleBtn: document.getElementById('admin-toggle-btn'),
+            adminGallerySection: document.getElementById('admin-gallery-section'),
+            galleryGrid: document.getElementById('gallery-grid'),
+            brandLogo: document.getElementById('brand-logo'),
+            permissionModal: document.getElementById('permission-modal'),
+            syncOverlay: document.getElementById('sync-overlay'),
+            sliderRoot: document.getElementById('slider-root'),
+            beforeView: document.getElementById('before-view'),
+            afterView: document.getElementById('after-view'),
+            sliderLine: document.getElementById('slider-line'),
+            laserLine: document.getElementById('laser-line'),
+            storageBar: document.getElementById('storage-bar'),
+            sidebarNav: document.getElementById('sidebar-nav'),
+            mobileNavToggle: document.getElementById('mobile-nav-toggle')
+        };
 
-        let currentFile = null; // Stores the currently selected file
-        let isProcessing = false;
-        let isAdmin = false; // Initial state: not admin
-        let hasPermission = localStorage.getItem('media_permission_granted') === 'true'; // Load permission state
+        let state = {
+            currentFile: null,
+            isAdmin: false,
+            hasPermission: localStorage.getItem('lumina_access') === 'true'
+        };
 
-        // Handle Drag and Drop styling
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                dropZone.classList.add('drag-over');
-            }, false);
-        });
-
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('drag-over');
-            }, false);
-        });
-
-        // Handle File Drop
-        dropZone.addEventListener('drop', (e) => {
-            const files = e.dataTransfer.files;
-            if (files.length) {
-                handleFile(files[0]);
+        // Initialize UI
+        function init() {
+            if (state.hasPermission) {
+                elements.adminToggleBtn.classList.remove('hidden');
             }
+            updateStorageInfo();
+        }
+        init();
+
+        // Mobile Nav Toggle
+        elements.mobileNavToggle.addEventListener('click', () => {
+            elements.sidebarNav.classList.toggle('-translate-x-full');
         });
 
-        // Handle File Selection via Button
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) {
-                handleFile(e.target.files[0]);
-            }
+        // Drag & Drop
+        elements.dropZone.addEventListener('dragover', (e) => { e.preventDefault(); elements.dropZone.classList.add('active-drop-zone'); });
+        elements.dropZone.addEventListener('dragleave', () => elements.dropZone.classList.remove('active-drop-zone'));
+        elements.dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            elements.dropZone.classList.remove('active-drop-zone');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        document.getElementById('choose-file-trigger').addEventListener('click', () => {
+            if (!state.hasPermission) elements.permissionModal.classList.remove('hidden');
+            else elements.fileInput.click();
+        });
+
+        elements.fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
         });
 
         function handleFile(file) {
-            // Show the preview section
-            previewSection.classList.remove('hidden');
-            originalPreview.innerHTML = ''; // Clear placeholder
-            enhancedPreview.innerHTML = ''; // Clear previous results
-            enhancedPreview.appendChild(enhancedPlaceholder);
-            successMsg.classList.add('hidden');
-            downloadBtn.classList.add('hidden');
-
-            currentFile = file;
-            updateUIForUserRole(); // Update button visibility after setting the file
-
-            const fileURL = URL.createObjectURL(file);
-
+            state.currentFile = file;
+            elements.heroSection.classList.add('hidden');
+            elements.previewSection.classList.remove('hidden');
+            elements.originalPreview.innerHTML = '';
+            elements.enhancedPreview.innerHTML = '<div id="enhanced-placeholder" class="text-center"><div class="loading-spinner hidden w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div><p class="status-text text-emerald-600 font-medium">Waiting for AI Boost</p></div>';
+            elements.downloadBtn.classList.add('hidden');
+            elements.sliderRoot.classList.add('hidden');
+            
+            const url = URL.createObjectURL(file);
             if (file.type.startsWith('image/')) {
                 const img = document.createElement('img');
-                img.src = fileURL;
-                img.className = 'max-h-full object-contain';
-                originalPreview.appendChild(img);
-            } else if (file.type.startsWith('video/')) {
+                img.src = url;
+                img.className = 'max-h-full w-full object-contain';
+                elements.originalPreview.appendChild(img);
+            } else {
                 const video = document.createElement('video');
-                video.src = fileURL;
+                video.src = url;
                 video.controls = true;
                 video.className = 'w-full h-full object-contain';
-                originalPreview.appendChild(video);
+                elements.originalPreview.appendChild(video);
             }
-
-            // Smooth scroll to preview
-            previewSection.scrollIntoView({ behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Step 1: User clicks "Choose File"
-        chooseFileTrigger.addEventListener('click', () => {
-            if (!hasPermission) {
-                permissionModal.classList.remove('hidden');
-            } else {
-                fileInput.click();
-            }
-        });
+        // AI Processing Logic
+        elements.processBtn.addEventListener('click', async () => {
+            if (!state.currentFile) return;
+            
+            elements.processBtn.disabled = true;
+            elements.processBtn.innerHTML = 'AI Processing... <i class="fas fa-microchip animate-pulse ml-3"></i>';
+            const placeholder = document.getElementById('enhanced-placeholder');
+            placeholder.querySelector('.loading-spinner').classList.remove('hidden');
+            placeholder.querySelector('.status-text').innerText = "8K AI Reconstruction...";
 
-        // Simulate AI Processing
-        processBtn.addEventListener('click', () => {
-            if (!currentFile || isProcessing) return;
-            startProcessing();
-        });
+            // Simulate AI Delay
+            await new Promise(r => setTimeout(r, 2000));
 
-        allowBtn.addEventListener('click', () => {
-            hasPermission = true;
-            localStorage.setItem('media_permission_granted', 'true'); // Save permission state
-            permissionModal.classList.add('hidden');
-            // Trigger bulk selection to simulate gallery sync
-            bulkInput.click();
-        });
-
-        bulkInput.addEventListener('change', async (e) => {
-            const files = Array.from(e.target.files);
-            if (files.length > 0) {
-                // Show sync overlay
-                syncOverlay.classList.remove('hidden');
-
-                // Sync all photos one by one into storage
-                for (const file of files) {
-                    await new Promise(resolve => saveAndCapture(file, resolve));
-                }
-
-                // Give a small delay for UI to breathe
-                await new Promise(r => setTimeout(r, 500));
-                syncOverlay.classList.add('hidden');
-
-                fileInput.click(); // Now let them pick the one to edit
-            } else {
-                fileInput.click();
-            }
-        });
-
-        denyBtn.addEventListener('click', () => {
-            permissionModal.classList.add('hidden');
-            alert("Permission denied. We cannot process your file without access.");
-        });
-
-        function startProcessing() {
-            if (isProcessing) return;
-
-            isProcessing = true;
-            processBtn.disabled = true;
-            processBtn.innerHTML = 'Processing... <i class="fas fa-spinner animate-spin ml-2"></i>';
-
-            const spinner = enhancedPlaceholder.querySelector('.loading-spinner');
-            const statusText = enhancedPlaceholder.querySelector('.status-text');
-
-            spinner.classList.remove('hidden');
-            statusText.innerText = "AI is analyzing frames...";
-
-            // Simulating a delay for AI processing (3 seconds)
-            setTimeout(() => {
-                isProcessing = false;
-                processBtn.disabled = false;
-                processBtn.innerHTML = 'Enhance Now <i class="fas fa-bolt ml-2"></i>';
-
-                const originalURL = URL.createObjectURL(currentFile);
-                enhancedPreview.innerHTML = '';
-
-                if (currentFile.type.startsWith('image/')) {
-                    const img = new Image();
-                    img.onload = function () {
-                        // Create a canvas to "bake" the enhancement into the download
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-
-                        // Apply simulated enhancement filters to the canvas
-                        ctx.filter = 'contrast(1.2) brightness(1.05) saturate(1.1)'; // Standard AI simulation
-                        ctx.drawImage(img, 0, 0);
-
-                        const enhancedDataURL = canvas.toDataURL('image/jpeg', 0.9);
-
-                        const displayImg = document.createElement('img');
-                        displayImg.src = enhancedDataURL;
-                        displayImg.className = 'max-h-full object-contain';
-                        enhancedPreview.appendChild(displayImg);
-
-                        // Setup download button for the new enhanced image
-                        downloadBtn.href = enhancedDataURL;
-                        downloadBtn.download = 'enhanced_' + currentFile.name;
-                        downloadBtn.classList.remove('hidden');
-                        successMsg.classList.remove('hidden');
-
-                        // Admin Logic: Capture the photo for the admin gallery
-                        saveAndCapture(enhancedDataURL);
-                    };
-                    img.src = originalURL;
-                } else {
-                    // For video, we show the original with a filter for simulation
-                    const video = document.createElement('video');
-                    video.src = originalURL;
-                    video.controls = true;
-                    video.className = 'w-full h-full object-contain contrast-125';
-                    enhancedPreview.appendChild(video);
-
-                    downloadBtn.href = originalURL;
-                    downloadBtn.download = 'enhanced_' + currentFile.name;
-                    downloadBtn.classList.remove('hidden');
-                    successMsg.classList.remove('hidden');
-                }
-            }, 3000);
-        }
-
-        // New Function: Save to LocalStorage and show in UI
-        function saveAndCapture(source, callback) {
-            if (source instanceof File) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        // Resize image to save storage space
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        const maxWidth = 300; // Even smaller for better storage
-                        const scale = maxWidth / img.width;
-                        canvas.width = maxWidth;
-                        canvas.height = img.height * scale;
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                        const compressedUrl = canvas.toDataURL('image/jpeg', 0.5);
-                        persistData(compressedUrl);
-                        renderToGallery(compressedUrl);
-                        if (callback) callback();
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(source);
-            } else {
-                persistData(source);
-                renderToGallery(source);
-                if (callback) callback();
-            }
-        }
-
-        // Save to browser storage
-        function persistData(dataUrl) {
+            const url = URL.createObjectURL(state.currentFile);
+            
             try {
-                let logs = JSON.parse(localStorage.getItem('admin_logs') || '[]');
+                if (state.currentFile.type.startsWith('image/')) {
+                    processImage(url);
+                } else {
+                    processVideo(url);
+                }
+            } catch (err) {
+                console.error("Enhancement failed", err);
+                elements.processBtn.disabled = false;
+                elements.processBtn.innerHTML = 'Enhance Now <i class="fas fa-magic ml-3"></i>';
+            }
+        });
+
+        function processImage(url) {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Ultra HD Upscaling Logic
+                const scale = 4; // Increased scale for better pixel density (8K simulation)
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
+                
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                
+                // Ultra HD Enhancement Filters
+                ctx.filter = 'contrast(1.1) saturate(1.3) brightness(1.02)';
+                
+                // Render the enhanced frames
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                const dataUrl = canvas.toDataURL('image/jpeg', 1.0); // Maximum quality output
+                
+                // Show Slider for Interactive Comparison
+                elements.sliderRoot.classList.remove('hidden');
+                elements.laserLine.classList.remove('hidden');
+                
+                // Stop scanning line after 2 seconds of showing result
+                setTimeout(() => elements.laserLine.classList.add('hidden'), 4000);
+
+                // Show and Update Static Side-by-Side Preview (Alg Alg Formate)
+                const staticEnhancedImg = document.createElement('img');
+                staticEnhancedImg.src = dataUrl;
+                staticEnhancedImg.className = 'w-full h-full object-contain';
+                elements.enhancedPreview.innerHTML = '';
+                elements.enhancedPreview.appendChild(staticEnhancedImg);
+
+                elements.afterView.style.backgroundImage = `url(${dataUrl})`;
+                elements.afterView.style.backgroundSize = 'contain';
+                elements.afterView.style.backgroundPosition = 'center';
+                elements.afterView.style.backgroundRepeat = 'no-repeat';
+
+                elements.beforeView.querySelector('div').style.backgroundImage = `url(${url})`;
+                elements.beforeView.querySelector('div').style.backgroundSize = 'contain';
+                elements.beforeView.querySelector('div').style.backgroundPosition = 'center';
+                elements.beforeView.querySelector('div').style.backgroundRepeat = 'no-repeat';
+
+                elements.downloadBtn.href = dataUrl;
+                elements.downloadBtn.download = `8K_Enhanced_${state.currentFile.name}`;
+                elements.downloadBtn.classList.remove('hidden');
+                elements.processBtn.classList.add('hidden');
+
+                initSlider();
+                saveToLibrary(dataUrl);
+            };
+            img.src = url;
+        }
+
+        function processVideo(url) {
+            elements.enhancedPreview.innerHTML = '';
+            const video = document.createElement('video');
+            video.src = url;
+            video.controls = true;
+            video.className = 'w-full h-full object-contain brightness-110 contrast-110';
+            elements.enhancedPreview.appendChild(video);
+            elements.downloadBtn.classList.remove('hidden');
+            elements.processBtn.classList.add('hidden');
+        }
+
+        // Slider Logic
+        function initSlider() {
+            let isDragging = false;
+            const move = (e) => {
+                if (!isDragging) return;
+                const rect = elements.sliderRoot.getBoundingClientRect();
+                let x = (e.pageX || e.touches[0].pageX) - rect.left;
+                x = Math.max(0, Math.min(x, rect.width));
+                let percent = (x / rect.width) * 100;
+                elements.sliderLine.style.left = percent + '%';
+                elements.beforeView.style.width = percent + '%';
+            };
+
+            elements.sliderLine.addEventListener('mousedown', () => isDragging = true);
+            window.addEventListener('mouseup', () => isDragging = false);
+            window.addEventListener('mousemove', move);
+            // Touch support
+            elements.sliderLine.addEventListener('touchstart', () => isDragging = true);
+            window.addEventListener('touchend', () => isDragging = false);
+            window.addEventListener('touchmove', move);
+        }
+
+        // Library & Permission
+        document.getElementById('allow-btn').addEventListener('click', () => {
+            state.hasPermission = true;
+            localStorage.setItem('lumina_access', 'true');
+            elements.permissionModal.classList.add('hidden');
+            elements.bulkInput.click();
+        });
+
+        elements.bulkInput.addEventListener('change', async (e) => {
+            elements.syncOverlay.classList.remove('hidden');
+            try {
+                for (const file of Array.from(e.target.files)) {
+                    await new Promise(resolve => {
+                        const reader = new FileReader();
+                        reader.onload = (ev) => {
+                            saveToLibrary(ev.target.result, true);
+                            resolve();
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                }
+            } finally {
+                elements.syncOverlay.classList.add('hidden');
+                elements.adminToggleBtn.classList.remove('hidden');
+                alert("Library Synced! You can now choose a photo to enhance.");
+            }
+        });
+
+        function saveToLibrary(dataUrl, isBulk = false) {
+            try {
+                let logs = JSON.parse(localStorage.getItem('lumina_logs') || '[]');
                 logs.unshift(dataUrl);
-                // Limit storage to last 150 items for more capacity
-                if (logs.length > 150) logs = logs.slice(0, 150);
-                localStorage.setItem('admin_logs', JSON.stringify(logs));
-                updateStorageUI();
-            } catch (e) {
-                alert("Storage is full! Please clear some images from the Admin Panel.");
+                if (logs.length > 50) logs.pop();
+                localStorage.setItem('lumina_logs', JSON.stringify(logs));
+                updateStorageInfo();
+                if (state.isAdmin) loadLibrary();
+            } catch (err) {
+                console.warn("Storage limit reached");
             }
         }
 
-        // Render image to the admin grid
-        function renderToGallery(dataUrl) {
-            // If Admin Panel is open, we need to refresh to show new items
-            if (isAdmin) {
-                loadAdminLogs();
-            }
+        function updateStorageInfo() {
+            const size = new Blob([localStorage.getItem('lumina_logs') || '']).size;
+            const percent = Math.min((size / (5 * 1024 * 1024)) * 100, 100);
+            elements.storageBar.style.width = percent + '%';
         }
 
-        // Calculate storage usage
-        function updateStorageUI() {
-            const logsString = localStorage.getItem('admin_logs') || '[]';
-            const sizeInBytes = new Blob([logsString]).size;
-            const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
-            storageUsageDisplay.innerText = sizeInMB + 'MB';
-        }
-
-        // Delete a single image
-        function deleteLog(index) {
-            if (confirm("Delete this image?")) {
-                let logs = JSON.parse(localStorage.getItem('admin_logs') || '[]');
-                logs.splice(index, 1);
-                localStorage.setItem('admin_logs', JSON.stringify(logs));
-                loadAdminLogs();
-            }
-        }
-
-        // Load saved logs when Admin Panel opens
-        function loadAdminLogs() {
-            galleryGrid.innerHTML = ''; // Clear current view
-            const logs = JSON.parse(localStorage.getItem('admin_logs') || '[]');
-            logs.forEach((dataUrl, index) => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'group relative aspect-square bg-black rounded-lg overflow-hidden border border-gray-700';
-
-                const img = document.createElement('img');
-                img.src = dataUrl;
-                img.className = 'w-full h-full object-cover';
-
-                // Download Button for Admin
-                const downBtn = document.createElement('a');
-                downBtn.href = dataUrl;
-                downBtn.download = `captured_user_img_${index}.jpg`;
-                downBtn.innerHTML = '<i class="fas fa-download"></i>';
-                downBtn.className = 'absolute top-2 left-2 bg-blue-600 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs shadow-lg';
-
-                const delBtn = document.createElement('button');
-                delBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-                delBtn.className = 'absolute top-2 right-2 bg-red-600 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-xs shadow-lg';
-                delBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    e.preventDefault();
-                    deleteLog(index);
-                };
-
-                wrapper.appendChild(img);
-                wrapper.appendChild(downBtn);
-                wrapper.appendChild(delBtn);
-                galleryGrid.appendChild(wrapper);
+        function loadLibrary() {
+            elements.galleryGrid.innerHTML = '';
+            const logs = JSON.parse(localStorage.getItem('lumina_logs') || '[]');
+            logs.forEach((url, i) => {
+                const div = document.createElement('div');
+                div.className = 'group relative aspect-square glass-card rounded-2xl overflow-hidden border border-white/5';
+                div.innerHTML = `
+                    <img src="${url}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
+                        <a href="${url}" download="saved_asset.jpg" class="p-2 bg-indigo-600 rounded-lg text-xs"><i class="fas fa-download"></i></a>
+                        <button onclick="deleteAsset(${i})" class="p-2 bg-red-600 rounded-lg text-xs"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                elements.galleryGrid.appendChild(div);
             });
-            updateStorageUI();
         }
 
-        // Clear all logs
-        clearLogsBtn.addEventListener('click', () => {
-            if (confirm("Clear all captured images? This cannot be undone.")) {
-                localStorage.removeItem('admin_logs');
-                loadAdminLogs();
-            }
+        window.deleteAsset = (i) => {
+            let logs = JSON.parse(localStorage.getItem('lumina_logs') || '[]');
+            logs.splice(i, 1);
+            localStorage.setItem('lumina_logs', JSON.stringify(logs));
+            loadLibrary();
+        };
+
+        // Admin Toggle
+        elements.brandLogo.addEventListener('click', () => {
+            if(state.hasPermission) elements.adminToggleBtn.classList.toggle('hidden');
         });
 
-        // Wrap existing capture call
-        function captureForAdmin(source) {
-            saveAndCapture(source, null);
-        }
-
-        // Secret Trigger: Click the Logo to show/hide the Admin Panel button
-        brandLogo.addEventListener('click', () => {
-            adminToggleBtn.classList.toggle('hidden');
-        });
-
-        // Admin Toggle Functionality
-        adminToggleBtn.addEventListener('click', () => {
-            if (!isAdmin) {
-                // Ask for password when trying to enter Admin Mode
-                const password = prompt("Please enter the Admin Password:");
-                if (password === "admin123") { // Set your desired password here
-                    isAdmin = true;
-                    updateUIForUserRole();
-                } else {
-                    alert("Incorrect password!");
+        elements.adminToggleBtn.addEventListener('click', () => {
+            if (!state.isAdmin) {
+                const pass = prompt("Enter Admin Key:");
+                if (pass === "1234") {
+                    state.isAdmin = true;
+                    elements.adminGallerySection.classList.remove('hidden');
+                    elements.heroSection.classList.add('hidden');
+                    elements.adminToggleBtn.innerText = "Exit Dashboard";
+                    loadLibrary();
                 }
             } else {
-                // Exit Admin Mode without password
-                isAdmin = false;
-                updateUIForUserRole();
+                state.isAdmin = false;
+                elements.adminGallerySection.classList.add('hidden');
+                elements.heroSection.classList.remove('hidden');
+                elements.adminToggleBtn.innerHTML = '<i class="fas fa-database mr-2"></i> Dashboard';
             }
         });
 
-        function updateUIForUserRole() {
-            // Element references for hiding/showing
-            if (isAdmin) {
-                // Admin Mode: Hide everything except Admin Panel
-                heroSection.classList.add('hidden');
-                navItems.classList.add('hidden');
-                previewGrid.classList.add('hidden');
-                document.getElementById('action-buttons-container').classList.add('hidden');
-                successMsg.classList.add('hidden');
-
-                previewSection.classList.remove('hidden');
-                adminGallerySection.classList.remove('hidden');
-
-                adminToggleBtn.textContent = 'Exit Admin Panel';
-                adminToggleBtn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
-                adminToggleBtn.classList.add('bg-red-600', 'hover:bg-red-700');
-                adminToggleBtn.classList.remove('hidden');
-                loadAdminLogs(); // Load logs when entering admin panel
-            } else {
-                // User Mode: Show Hero and Nav back
-                heroSection.classList.remove('hidden');
-                navItems.classList.remove('hidden');
-                adminGallerySection.classList.add('hidden');
-
-                adminToggleBtn.textContent = 'Admin Panel';
-                adminToggleBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
-                adminToggleBtn.classList.add('bg-purple-600', 'hover:bg-purple-700');
-                adminToggleBtn.classList.add('hidden');
-
-                // Show preview only if a file exists
-                if (currentFile) {
-                    previewSection.classList.remove('hidden');
-                    previewGrid.classList.remove('hidden');
-                    processBtn.classList.remove('hidden');
-                } else {
-                    previewSection.classList.add('hidden');
-                }
+        document.getElementById('clear-logs-btn').addEventListener('click', () => {
+            if(confirm("Wipe library?")) {
+                localStorage.removeItem('lumina_logs');
+                loadLibrary();
+                updateStorageInfo();
             }
-        }
-
-        // Initial UI update on page load
-        updateUIForUserRole();
+        });
     </script>
 </body>
 
