@@ -1,629 +1,1641 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lumina AI | Professional Media Restoration</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        
-        .mesh-gradient {
-            background: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
-                        radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leopards Employee Card</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #172033;
+      background: #eef2f6;
+    }
 
-        .neon-border {
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            transition: all 0.3s ease;
-        }
+    .page {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0;
+      display: grid;
+      grid-template-columns: minmax(280px, 420px) minmax(300px, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
 
-        .neon-border:hover {
-            border-color: rgba(52, 211, 153, 0.8);
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.1);
-        }
+    .panel,
+    .preview-shell {
+      background: #fff;
+      border: 1px solid #d9e0e8;
+      border-radius: 8px;
+      box-shadow: 0 14px 36px rgba(25, 36, 55, 0.08);
+    }
 
-        .rgb-text {
-            background: linear-gradient(to right, #10b981, #22d3ee, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
+    .panel {
+      padding: 20px;
+    }
 
-        @keyframes rgb-shadow {
-            0% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
-            50% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.4); }
-            100% { box-shadow: 0 0 20px rgba(79, 70, 229, 0.4); }
-        }
+    .topline {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
 
-        .rgb-pulse {
-            animation: rgb-shadow 3s infinite alternate;
-        }
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #111;
+      background: #ffc400;
+      border: 3px solid #111;
+    }
 
-        .slider-container {
-            position: relative;
-            overflow: hidden;
-            user-select: none;
-            border-radius: 24px;
-        }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.15;
+    }
 
-        .slider-handle {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: white;
-            cursor: ew-resize;
-            z-index: 10;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-        }
+    .subtitle {
+      margin: 4px 0 0;
+      color: #5d6878;
+      font-size: 14px;
+    }
 
-        .slider-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 48px;
-            height: 48px;
-            background: #10b981;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-            border: 4px solid white;
-        }
+    form {
+      display: grid;
+      gap: 13px;
+    }
 
-        .comparison-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
+    label {
+      display: grid;
+      gap: 6px;
+      color: #344052;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-        @keyframes scan {
-            0% { top: 0%; opacity: 0; }
-            50% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #cfd7e2;
+      border-radius: 6px;
+      padding: 11px 12px;
+      color: #172033;
+      background: #fbfcfe;
+      font: inherit;
+      outline: none;
+    }
 
-        .scan-line {
-            position: absolute;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(to right, transparent, #10b981, transparent);
-            z-index: 30;
-            animation: scan 2s linear infinite;
-            box-shadow: 0 0 15px #10b981;
-        }
+    textarea {
+      resize: vertical;
+      min-height: 72px;
+    }
 
-        @keyframes pulse-border {
-            0% { border-color: #10b981; }
-            50% { border-color: #22d3ee; }
-            100% { border-color: #10b981; }
-        }
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #f0b400;
+      box-shadow: 0 0 0 3px rgba(255, 196, 0, 0.2);
+    }
 
-        .active-drop-zone {
-            animation: pulse-border 1.5s infinite;
-            background: rgba(16, 185, 129, 0.1);
-        }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
 
-        /* Improved Pixel Rendering */
-        #after-view, #before-view div, img, .slider-container div {
-            image-rendering: -webkit-optimize-contrast;
-            image-rendering: crisp-edges;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-    </style>
+    .photo-input {
+      border: 1px dashed #aeb8c6;
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 8px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    button {
+      min-height: 42px;
+      border: 0;
+      border-radius: 6px;
+      padding: 0 16px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .primary {
+      background: #ffc400;
+      color: #111;
+      border: 1px solid #e0aa00;
+    }
+
+    .secondary {
+      background: #172033;
+      color: #fff;
+    }
+
+    .muted {
+      color: #647184;
+      font-size: 12px;
+      line-height: 1.45;
+      margin: 2px 0 0;
+    }
+
+    .preview-shell {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+      justify-items: stretch;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 390px));
+      gap: 18px;
+      justify-content: center;
+      align-items: start;
+    }
+
+    .side-title {
+      margin: 0 0 10px;
+      text-align: center;
+      color: #4f5b6d;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .card-wrap {
+      width: min(100%, 390px);
+      aspect-ratio: 390 / 610;
+      display: grid;
+      place-items: center;
+    }
+
+    .employee-card {
+      width: 390px;
+      height: 610px;
+      overflow: hidden;
+      border-radius: 18px;
+      position: relative;
+      background: #fff;
+      border: 1px solid #cfd7e2;
+      box-shadow: 0 18px 42px rgba(22, 31, 48, 0.18);
+      transform-origin: center;
+    }
+
+    .card-header {
+      height: 192px;
+      color: #111;
+      background: #111;
+      padding: 18px 20px;
+      position: relative;
+    }
+
+    .leopard-photo {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      height: 96px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #f5a900, #ffd34d 54%, #2a1c05);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: inset 0 0 0 1px rgba(17, 17, 17, 0.16), 0 10px 22px rgba(0, 0, 0, 0.2);
+    }
+
+    .leopard-photo svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .front-ribbon {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 132px;
+      height: 74px;
+      background: #ffc400;
+      clip-path: polygon(24% 0, 100% 0, 100% 100%, 0 0);
+    }
+
+    .id-chip {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      z-index: 2;
+      background: #ffc400;
+      color: #111;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .card-header .logo {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 0;
+      color: #fff;
+      position: relative;
+      z-index: 2;
+    }
+
+    .logo-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 7px;
+      border: 3px solid #111;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #111;
+    }
+
+    .card-label {
+      margin-top: 13px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      color: #ffc400;
+      position: relative;
+      z-index: 2;
+    }
+
+    .photo-frame {
+      width: 138px;
+      height: 156px;
+      border-radius: 12px;
+      position: absolute;
+      top: 132px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f4f6f9;
+      border: 5px solid #fff;
+      box-shadow: 0 10px 24px rgba(17, 17, 17, 0.18);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      color: #6c7583;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .card-body {
+      padding: 134px 28px 24px;
+      text-align: center;
+    }
+
+    .emp-name {
+      margin: 0;
+      font-size: 27px;
+      line-height: 1.12;
+      color: #111;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+
+    .emp-role {
+      margin: 8px 0 16px;
+      color: #d29d00;
+      font-size: 15px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .valid-badge {
+      display: inline-grid;
+      place-items: center;
+      min-height: 26px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #111;
+      color: #ffc400;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .detail-list {
+      display: grid;
+      gap: 7px;
+      text-align: left;
+      margin-top: 16px;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 100px 1fr;
+      gap: 10px;
+      align-items: center;
+      min-height: 32px;
+      border-bottom: 1px solid #eef1f5;
+      font-size: 14px;
+    }
+
+    .detail-row strong {
+      color: #687386;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .detail-row span {
+      color: #172033;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .card-footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 58px;
+      color: #fff;
+      background: #111;
+      display: grid;
+      place-items: center;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      padding: 0 22px;
+    }
+
+    .back-card {
+      background: #10131a;
+      color: #fff;
+      border-color: #10131a;
+    }
+
+    .back-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255, 196, 0, 0.18) 0 42px, transparent 43px),
+        radial-gradient(circle at 82% 76%, rgba(255, 196, 0, 0.14) 0 54px, transparent 55px),
+        linear-gradient(160deg, rgba(255, 196, 0, 0.18), transparent 34%);
+      pointer-events: none;
+    }
+
+    .back-hero {
+      height: 218px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f2a900, #ffc400 55%, #402a06);
+    }
+
+    .back-hero svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .back-content {
+      position: relative;
+      padding: 22px 28px;
+      display: grid;
+      gap: 13px;
+    }
+
+    .back-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: #ffc400;
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .back-note {
+      margin: 0;
+      color: #dfe6f0;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .back-info {
+      display: grid;
+      gap: 10px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .back-info span {
+      display: block;
+      color: #99a4b5;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .signature-line {
+      height: 52px;
+      border-bottom: 2px solid #ffc400;
+      display: grid;
+      align-items: end;
+      color: #ffc400;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding-bottom: 7px;
+    }
+
+    .barcode {
+      height: 48px;
+      border-radius: 6px;
+      background:
+        linear-gradient(90deg,
+          #fff 0 4px, transparent 4px 8px,
+          #fff 8px 11px, transparent 11px 18px,
+          #fff 18px 26px, transparent 26px 31px,
+          #fff 31px 34px, transparent 34px 42px,
+          #fff 42px 51px, transparent 51px 56px,
+          #fff 56px 60px, transparent 60px 69px,
+          #fff 69px 78px, transparent 78px 84px,
+          #fff 84px 88px, transparent 88px 96px);
+      background-size: 96px 100%;
+      opacity: 0.95;
+    }
+
+    .status {
+      min-height: 18px;
+      color: #287442;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .hidden-card {
+      position: fixed;
+      left: -9999px;
+      top: 0;
+      width: 390px;
+      height: 610px;
+      pointer-events: none;
+    }
+
+    @media (max-width: 860px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+
+      .employee-card {
+        transform: scale(var(--card-scale, 1));
+      }
+    }
+
+    @media (max-width: 440px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-shell {
+        padding: 16px;
+      }
+
+      .card-wrap {
+        width: 100%;
+        overflow: hidden;
+      }
+    }
+
+    .card-wrap {
+      aspect-ratio: 390 / 572;
+    }
+
+    .employee-card {
+      height: 572px;
+      border-radius: 18px;
+      background: #f8f8f5;
+      border: 0;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-header {
+      height: 246px;
+      padding: 0;
+      background-image: url("reference-card.jpg");
+      background-size: 888px 592px;
+      background-position: -34px -6px;
+      background-repeat: no-repeat;
+    }
+
+    .card-header .logo,
+    .card-label,
+    .front-ribbon,
+    .id-chip,
+    .leopard-photo {
+      display: none;
+    }
+
+    .photo-frame {
+      width: 166px;
+      height: 166px;
+      top: 160px;
+      border-radius: 50%;
+      border: 5px solid #efb300;
+      background: #fff;
+      box-shadow: none;
+    }
+
+    .photo-frame img {
+      border-radius: 50%;
+    }
+
+    .card-body {
+      padding: 84px 56px 0;
+    }
+
+    .emp-name {
+      font-size: 21px;
+      line-height: 1.1;
+      letter-spacing: 0;
+      color: #080808;
+    }
+
+    .emp-role {
+      margin: 4px 0 14px;
+      color: #d8a600;
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .valid-badge {
+      display: none;
+    }
+
+    .detail-list {
+      margin-top: 0;
+      gap: 2px;
+    }
+
+    .detail-row {
+      grid-template-columns: 112px 12px 1fr;
+      gap: 8px;
+      border-bottom: 0;
+      min-height: 20px;
+      font-size: 14px;
+    }
+
+    .detail-row::before {
+      content: ":";
+      grid-column: 2;
+      color: #111;
+      font-weight: 700;
+    }
+
+    .detail-row strong {
+      grid-column: 1;
+      grid-row: 1;
+      color: #111;
+      font-size: 14px;
+      font-weight: 400;
+      text-transform: none;
+    }
+
+    .detail-row span {
+      grid-column: 3;
+      grid-row: 1;
+      color: #111;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .card-footer {
+      height: 64px;
+      bottom: 0;
+      background-image: url("reference-card.jpg");
+      background-size: 888px 592px;
+      background-position: -34px -514px;
+      background-repeat: no-repeat;
+      color: transparent;
+      font-size: 0;
+      padding: 0;
+    }
+
+    .back-card {
+      background: #f8f8f5;
+    }
+
+    .back-card::before {
+      display: none;
+    }
+
+    .back-hero {
+      height: 232px;
+      background-image: url("reference-card.jpg");
+      background-size: 888px 592px;
+      background-position: -464px -6px;
+      background-repeat: no-repeat;
+    }
+
+    .back-hero svg {
+      display: none;
+    }
+
+    .back-content {
+      padding: 30px 28px 0;
+      height: 340px;
+      background-image: url("reference-card.jpg");
+      background-size: 888px 592px;
+      background-position: -464px -238px;
+      background-repeat: no-repeat;
+      color: #111;
+      gap: 0;
+    }
+
+    .back-brand,
+    .back-note,
+    .back-info {
+      display: none;
+    }
+
+    .signature-line,
+    .barcode {
+      display: none;
+    }
+  </style>
 </head>
-
-<body class="text-black min-h-screen mesh-gradient">
-
-    <!-- Overlay Loader -->
-    <div id="sync-overlay" class="fixed inset-0 bg-white/90 z-[100] flex flex-col items-center justify-center hidden backdrop-blur-md">
-        <div class="relative w-20 h-20 mb-8">
-            <div class="absolute inset-0 border-4 border-emerald-500/20 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-t-emerald-500 rounded-full animate-spin"></div>
+<body>
+  <main class="page">
+    <section class="panel">
+      <div class="topline">
+        <div class="brand-mark">LCS</div>
+        <div>
+          <h1>Leopards Employee Card</h1>
+          <p class="subtitle">Details fill karo, neeche card ready ho jayega.</p>
         </div>
-        <h3 class="text-2xl font-bold tracking-tight mb-2 text-black">Enhancing Quality</h3>
-        <p class="text-black">Optimizing AI models for your gallery...</p>
-    </div>
+      </div>
 
-    <!-- Permission Modal -->
-    <div id="permission-modal" class="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-[80] hidden p-4">
-        <div class="glass-card p-8 rounded-3xl max-w-md w-full shadow-2xl">
-            <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mb-6 mx-auto">
-                <i class="fas fa-shield-halved text-3xl text-emerald-400"></i>
-            </div>
-            <h3 class="text-2xl font-bold mb-3 text-center text-black">Media Access</h3>
-            <p class="text-slate-600 mb-8 text-center leading-relaxed">Granting access allows our AI to instantly sync and restore your photos using local processing.</p>
-            <div class="flex gap-4">
-                <button id="deny-btn" class="flex-1 px-6 py-3 rounded-xl font-semibold bg-slate-200 text-black hover:bg-slate-300 transition">Skip</button>
-                <button id="allow-btn" class="flex-1 px-6 py-3 rounded-xl font-semibold bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/20 transition">Allow Access</button>
-            </div>
-        </div>
-    </div>
+      <form id="employeeForm">
+        <label>
+          Employee Photo
+          <input class="photo-input" id="photoInput" type="file" accept="image/*">
+        </label>
 
-    <!-- Mobile Menu Toggle Button -->
-    <button id="mobile-nav-toggle" class="md:hidden fixed top-6 left-6 z-[70] bg-emerald-600 text-white w-10 h-10 rounded-xl shadow-lg flex items-center justify-center">
-        <i class="fas fa-bars"></i>
-    </button>
+        <label>
+          Employee Name
+          <input id="nameInput" type="text" placeholder="e.g. Ali Raza" maxlength="34">
+        </label>
 
-    <!-- Navigation -->
-    <nav id="sidebar-nav" class="fixed left-0 top-0 h-full w-64 p-8 flex flex-col items-start space-y-12 z-50 bg-white border-r border-slate-100 transition-transform -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
-        <div id="brand-logo" class="flex items-center space-x-2 cursor-pointer group">
-            <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform shadow-[0_0_20px_rgba(16,185,129,0.6)]">
-                <i class="fas fa-wand-magic-sparkles text-white"></i>
-            </div>
-            <span class="text-xl font-extrabold tracking-tighter text-black">REMNI<span class="rgb-text">.AI</span></span>
-        </div>
-        
-        <div class="flex flex-col items-start space-y-6 text-sm font-medium">
-            <div class="flex flex-col items-start space-y-3 text-slate-500 w-full">
-                <a href="#" class="hover:text-emerald-600 transition flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50 w-full text-black"><i class="fas fa-bolt"></i> <span>Enhance</span></a>
-                <a href="#" class="hover:text-emerald-600 transition flex items-center space-x-3 p-3 rounded-xl hover:bg-emerald-50 w-full text-black"><i class="fas fa-images"></i> <span>Showcase</span></a>
-            </div>
-            <div class="flex flex-col items-start space-y-4 w-full pt-6 border-t border-slate-50">
-                <button class="w-full bg-slate-900 text-white px-6 py-4 rounded-2xl font-bold hover:bg-black transition text-left shadow-lg">
-                    <i class="fas fa-user-circle mr-3"></i> Log In
-                </button>
-                <button id="admin-toggle-btn" class="hidden w-full bg-emerald-100 text-emerald-700 px-6 py-4 rounded-2xl font-bold transition text-left">
-                <i class="fas fa-database mr-3"></i> Dashboard
-                </button>
-            </div>
-        </div>
-    </nav>
+        <div class="grid-2">
+          <label>
+            Employee ID
+            <input id="idInput" type="text" placeholder="27744" maxlength="18">
+          </label>
 
-    <main class="md:ml-64 max-w-5xl mx-auto px-6 pt-12 pb-24">
-        <!-- Hero Section -->
-        <div id="hero-section" class="text-left mb-16">
-            <span class="inline-block px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-black tracking-widest uppercase mb-6">AI Restoration Pro</span>
-            <h2 class="text-5xl md:text-6xl font-extrabold mb-8 text-slate-900 leading-tight">
-                Professional <br><span class="text-emerald-500">Photo Enhance.</span>
-            </h2>
-            <p class="text-slate-500 text-lg md:text-xl max-w-2xl mb-12 font-medium">
-                Restore blurry, old, or low-quality photos to 8K Ultra HD clarity in seconds.
-            </p>
-
-            <!-- Upload Zone -->
-            <div id="drop-zone" class="glass-card p-12 rounded-[2.5rem] border-2 border-dashed border-emerald-200 transition-all cursor-pointer group hover:bg-white">
-                <input type="file" id="file-input" class="hidden" accept="image/*,video/*">
-                <input type="file" id="bulk-input" class="hidden" accept="image/*" multiple>
-                
-                <div class="mb-6 flex justify-start items-center space-x-6">
-                    <div class="w-20 h-20 bg-emerald-500 rounded-3xl flex items-center justify-center group-hover:rotate-6 transition-transform shadow-xl shadow-emerald-200 text-white">
-                        <i class="fas fa-cloud-arrow-up text-3xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-bold text-black mb-1">Upload Photo</h3>
-                        <p class="text-slate-400">Drag & drop or click to browse</p>
-                    </div>
-                </div>
-                <button id="choose-file-trigger" class="bg-emerald-600 text-white px-10 py-4 rounded-2xl font-bold hover:bg-emerald-700 transition shadow-xl shadow-emerald-200">
-                    Select from Device
-                </button>
-            </div>
+          <label>
+            Department
+            <input id="deptInput" type="text" placeholder="Operations" maxlength="24">
+          </label>
         </div>
 
-        <!-- Preview & Editor Section -->
-        <section id="preview-section" class="hidden space-y-12">
-            <div class="grid grid-cols-1 gap-8 text-left">
-                <!-- Comparison Slider -->
-                <div class="glass-card p-6 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                    <div class="flex justify-between items-center mb-4 px-4">
-                        <span class="text-xs font-black tracking-widest text-emerald-600 uppercase">Pro Enhancement Active</span>
-                        <div class="flex space-x-2">
-                            <span class="w-2 h-2 rounded-full bg-slate-200"></span>
-                            <span class="w-2 h-2 rounded-full bg-slate-200"></span>
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        </div>
-                    </div>
-                    
-                    <div id="slider-root" class="slider-container h-[500px] md:h-[600px] bg-slate-100 hidden relative">
-                        <div id="laser-line" class="scan-line hidden"></div>
-                        
-                        <!-- After (Bottom Layer) -->
-                        <div id="after-view" class="w-full h-full relative">
-                            <div class="absolute top-6 right-6 px-4 py-2 bg-emerald-500 text-white text-[10px] font-black rounded-xl shadow-xl z-20 tracking-widest">8K ULTRA HD</div>
-                        </div>
-                        
-                        <!-- Before (Top Layer) -->
-                        <div id="before-view" class="comparison-overlay">
-                            <div class="w-full h-full absolute inset-0 grayscale contrast-50 brightness-75"></div>
-                            <div class="absolute top-6 left-6 px-4 py-2 bg-slate-800 text-white text-[10px] font-black rounded-xl z-20 tracking-widest">ORIGINAL</div>
-                        </div>
+        <label>
+          Designation
+          <input id="roleInput" type="text" placeholder="Courier Officer" maxlength="28">
+        </label>
 
-                        <!-- Divider -->
-                        <div id="slider-line" class="slider-handle" style="left: 50%;">
-                            <div class="slider-button">
-                                <i class="fas fa-arrows-left-right"></i>
-                            </div>
-                        </div>
-                    </div>
+        <div class="grid-2">
+          <label>
+            CNIC
+            <input id="cnicInput" type="text" placeholder="37106-0184546-5" maxlength="18">
+          </label>
 
-                    <!-- Simple Preview (Fallback) -->
-                    <div id="simple-preview-grid" class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-                        <div class="relative aspect-video bg-slate-200 rounded-3xl overflow-hidden shadow-inner group">
-                            <div class="absolute top-4 left-4 px-3 py-1 bg-slate-900/10 text-slate-800 text-[10px] font-black rounded-full z-10 tracking-widest uppercase backdrop-blur-md">Original</div>
-                            <div id="original-preview" class="w-full h-full flex items-center justify-center">
-                                <p class="text-slate-600 font-medium">No Image Selected</p>
-                            </div>
-                        </div>
-                        <div class="relative aspect-video bg-emerald-50 rounded-3xl overflow-hidden shadow-2xl group border border-emerald-100">
-                            <div class="absolute top-4 left-4 px-3 py-1 bg-emerald-600 text-white text-[10px] font-black rounded-full z-10 tracking-widest uppercase shadow-lg">8K ENHANCED VIEW</div>
-                            <div id="enhanced-preview" class="w-full h-full flex items-center justify-center">
-                                <div id="enhanced-placeholder" class="text-center">
-                                    <div class="loading-spinner hidden w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                                    <p class="status-text text-emerald-600 font-bold">Ready for 8K Upscaling</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+          <label>
+            Contact No
+            <input id="phoneInput" type="tel" placeholder="0300 0000000" maxlength="18">
+          </label>
+        </div>
+
+        <label>
+          Date of Joining
+          <input id="joiningInput" type="text" placeholder="12-17-2021" maxlength="18">
+        </label>
+
+        <div class="actions">
+          <button class="primary" type="button" id="downloadBtn">Both PDF</button>
+          <button class="secondary" type="button" id="frontPdfBtn">Front PDF</button>
+          <button class="secondary" type="button" id="backPdfBtn">Back PDF</button>
+          <button class="secondary" type="reset">Clear</button>
+        </div>
+        <p class="muted">PDF browser me hi banegi. Internet ya library ki zarurat nahi.</p>
+      </form>
+    </section>
+
+    <section class="preview-shell" aria-label="Employee card preview">
+      <div class="preview-grid">
+        <div>
+          <p class="side-title">Front Side</p>
+          <div class="card-wrap">
+            <article class="employee-card" id="employeeCard">
+              <div class="card-header">
+                <div class="front-ribbon" aria-hidden="true"></div>
+                <div class="id-chip">STAFF ID</div>
+                <div class="logo">
+                  <span class="logo-box">L</span>
+                  <span>LEOPARDS</span>
+                </div>
+                <div class="card-label">Courier Services</div>
+                <div class="leopard-photo" aria-hidden="true">
+                  <svg viewBox="0 0 360 96" role="img" aria-label="Leopard picture">
+                    <defs>
+                      <linearGradient id="frontSky" x1="0" x2="1" y1="0" y2="1">
+                        <stop offset="0" stop-color="#fff0a8"/>
+                        <stop offset="0.48" stop-color="#ffc400"/>
+                        <stop offset="1" stop-color="#6d4809"/>
+                      </linearGradient>
+                    </defs>
+                    <rect width="360" height="96" fill="url(#frontSky)"/>
+                    <circle cx="44" cy="24" r="10" fill="#111" opacity="0.95"/>
+                    <circle cx="86" cy="66" r="7" fill="#111" opacity="0.95"/>
+                    <circle cx="146" cy="30" r="8" fill="#111" opacity="0.95"/>
+                    <circle cx="222" cy="66" r="7" fill="#111" opacity="0.95"/>
+                    <circle cx="312" cy="26" r="9" fill="#111" opacity="0.95"/>
+                    <path d="M18 76 C68 42,121 38,173 54 C216 68,267 54,339 21 L360 96 L0 96 Z" fill="#111" opacity="0.14"/>
+                    <g fill="#111">
+                      <path d="M88 58 C115 25,183 22,240 45 C257 52,280 47,299 35 C288 58,260 73,221 72 C176 72,133 78,88 58Z"/>
+                      <path d="M239 42 C260 20,291 18,306 36 C290 41,276 50,260 62Z"/>
+                      <path d="M95 58 C70 51,52 54,32 69 C53 70,75 68,100 64Z"/>
+                      <path d="M121 66 L107 92 L126 92 L145 67Z"/>
+                      <path d="M179 69 L168 92 L187 92 L204 68Z"/>
+                      <path d="M233 66 L226 92 L245 92 L257 62Z"/>
+                      <path d="M278 49 L292 92 L309 92 L294 42Z"/>
+                    </g>
+                    <g fill="#ffc400">
+                      <circle cx="140" cy="45" r="4"/>
+                      <circle cx="163" cy="38" r="3"/>
+                      <circle cx="188" cy="45" r="4"/>
+                      <circle cx="213" cy="53" r="3"/>
+                      <circle cx="256" cy="39" r="3"/>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="photo-frame">
+                <span id="photoPlaceholder">Upload<br>Photo</span>
+                <img id="photoPreview" alt="Employee photo">
+              </div>
+
+              <div class="card-body">
+                <h2 class="emp-name" id="cardName">Employee Name</h2>
+                <p class="emp-role" id="cardRole">Designation</p>
+                <span class="valid-badge">Valid Employee</span>
+
+                <div class="detail-list">
+                  <div class="detail-row">
+                    <strong>Dept</strong>
+                    <span id="cardDept">Operations</span>
+                  </div>
+                  <div class="detail-row">
+                    <strong>Employee ID</strong>
+                    <span id="cardId">27744</span>
+                  </div>
+                  <div class="detail-row">
+                    <strong>CNIC</strong>
+                    <span id="cardCnic">37106-0184546-5</span>
+                  </div>
+                  <div class="detail-row">
+                    <strong>Phone</strong>
+                    <span id="cardPhone">-</span>
+                  </div>
+                  <div class="detail-row">
+                    <strong>Date of Joining</strong>
+                    <span id="cardJoining">12-17-2021</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card-footer">www.leopardscourier.com | Authorized Employee</div>
+            </article>
+          </div>
+        </div>
+
+        <div>
+          <p class="side-title">Back Side</p>
+          <div class="card-wrap">
+            <article class="employee-card back-card" id="backCard">
+              <div class="back-hero">
+                <svg viewBox="0 0 390 218" role="img" aria-label="Leopard picture">
+                  <defs>
+                    <linearGradient id="backScene" x1="0" x2="1" y1="0" y2="1">
+                      <stop offset="0" stop-color="#ffe28a"/>
+                      <stop offset="0.45" stop-color="#ffc400"/>
+                      <stop offset="1" stop-color="#1a1306"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="390" height="218" fill="url(#backScene)"/>
+                  <g fill="#111" opacity="0.9">
+                    <circle cx="36" cy="55" r="9"/>
+                    <circle cx="82" cy="119" r="7"/>
+                    <circle cx="143" cy="40" r="8"/>
+                    <circle cx="207" cy="129" r="10"/>
+                    <circle cx="282" cy="58" r="7"/>
+                    <circle cx="344" cy="132" r="9"/>
+                  </g>
+                  <path d="M0 168 C76 112,128 125,197 142 C255 156,316 94,390 64 L390 218 L0 218Z" fill="#111" opacity="0.18"/>
+                  <g fill="#111">
+                    <path d="M72 130 C118 66,230 59,310 103 C323 110,348 97,372 72 C364 121,322 153,257 151 C188 151,129 163,72 130Z"/>
+                    <path d="M300 96 C329 58,371 54,389 86 C367 91,346 108,326 129Z"/>
+                    <path d="M81 130 C45 116,24 121,0 145 C29 146,57 143,91 137Z"/>
+                    <path d="M117 143 L92 218 L122 218 L155 139Z"/>
+                    <path d="M193 150 L171 218 L201 218 L231 145Z"/>
+                    <path d="M270 145 L259 218 L288 218 L307 132Z"/>
+                    <path d="M348 108 L367 218 L390 218 L370 92Z"/>
+                  </g>
+                  <g fill="#ffc400">
+                    <circle cx="141" cy="104" r="5"/>
+                    <circle cx="169" cy="92" r="4"/>
+                    <circle cx="203" cy="101" r="6"/>
+                    <circle cx="239" cy="116" r="4"/>
+                    <circle cx="284" cy="103" r="5"/>
+                    <circle cx="334" cy="88" r="4"/>
+                  </g>
+                </svg>
+              </div>
+
+              <div class="back-content">
+                <div class="back-brand">
+                  <span class="logo-box">L</span>
+                  <span>LEOPARDS</span>
+                </div>
+                <p class="back-note">This card is property of Leopards Courier Services. If found, please return it to the nearest branch.</p>
+
+                <div class="back-info">
+                  <div>
+                    <span>Employee</span>
+                    <strong id="backName">Employee Name</strong>
+                  </div>
+                  <div>
+                    <span>ID Number</span>
+                    <strong id="backId">LCS-001</strong>
+                  </div>
+                  <div>
+                    <span>Emergency / Branch</span>
+                    <strong id="backPhone">-</strong>
+                  </div>
                 </div>
 
-                <!-- Controls -->
-                <div class="flex flex-col md:flex-row items-center justify-start gap-4">
-                    <button id="process-btn" class="w-full md:w-auto px-12 py-5 bg-slate-900 hover:bg-black text-white rounded-2xl font-bold text-lg transition shadow-2xl flex items-center justify-center">
-                        Enhance Now <i class="fas fa-magic ml-3"></i>
-                    </button>
-                    <a id="download-btn" href="#" class="hidden w-full md:w-auto px-12 py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-lg transition shadow-2xl flex items-center justify-center">
-                        Download 8K <i class="fas fa-download ml-3"></i>
-                    </a>
-                </div>
-            </div>
+                <div class="signature-line">Authorized Signature</div>
+                <div class="barcode" aria-hidden="true"></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+      <div class="status" id="statusText"></div>
+    </section>
+  </main>
 
-            <!-- Library / Admin Section -->
-            <div id="admin-gallery-section" class="hidden mt-20 p-4 md:p-8 glass-card rounded-[2.5rem]">
-                <div class="flex justify-between items-end mb-8 border-b border-slate-100 pb-6">
-                    <div>
-                        <h3 class="text-3xl font-bold text-slate-900 mb-2">Recent Enhancements</h3>
-                        <p class="text-slate-500">Manage your previously processed high-res media</p>
-                    </div>
-                    <div class="flex items-center gap-6">
-                        <div class="text-right">
-                            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Vault Storage</p>
-                            <div class="h-1.5 w-32 bg-slate-800 rounded-full overflow-hidden">
-                                <div id="storage-bar" class="h-full bg-emerald-500" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <button id="clear-logs-btn" class="p-3 text-red-400 hover:bg-red-400/10 rounded-xl transition">
-                            <i class="fas fa-trash-can"></i>
-                        </button>
-                    </div>
-                </div>
-                <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    <!-- Cards -->
-                </div>
-            </div>
-        </section>
-    </main>
+  <script>
+    (function () {
+      var fields = {
+        name: document.getElementById('nameInput'),
+        id: document.getElementById('idInput'),
+        dept: document.getElementById('deptInput'),
+        role: document.getElementById('roleInput'),
+        cnic: document.getElementById('cnicInput'),
+        phone: document.getElementById('phoneInput'),
+        joining: document.getElementById('joiningInput')
+      };
 
-    <script>
-        // DOM Elements
-        const elements = {
-            fileInput: document.getElementById('file-input'),
-            bulkInput: document.getElementById('bulk-input'),
-            dropZone: document.getElementById('drop-zone'),
-            previewSection: document.getElementById('preview-section'),
-            heroSection: document.getElementById('hero-section'),
-            originalPreview: document.getElementById('original-preview'),
-            enhancedPreview: document.getElementById('enhanced-preview'),
-            processBtn: document.getElementById('process-btn'),
-            downloadBtn: document.getElementById('download-btn'),
-            adminToggleBtn: document.getElementById('admin-toggle-btn'),
-            adminGallerySection: document.getElementById('admin-gallery-section'),
-            galleryGrid: document.getElementById('gallery-grid'),
-            brandLogo: document.getElementById('brand-logo'),
-            permissionModal: document.getElementById('permission-modal'),
-            syncOverlay: document.getElementById('sync-overlay'),
-            sliderRoot: document.getElementById('slider-root'),
-            beforeView: document.getElementById('before-view'),
-            afterView: document.getElementById('after-view'),
-            sliderLine: document.getElementById('slider-line'),
-            laserLine: document.getElementById('laser-line'),
-            storageBar: document.getElementById('storage-bar'),
-            sidebarNav: document.getElementById('sidebar-nav'),
-            mobileNavToggle: document.getElementById('mobile-nav-toggle')
+      var card = {
+        name: document.getElementById('cardName'),
+        id: document.getElementById('cardId'),
+        dept: document.getElementById('cardDept'),
+        role: document.getElementById('cardRole'),
+        cnic: document.getElementById('cardCnic'),
+        phone: document.getElementById('cardPhone'),
+        joining: document.getElementById('cardJoining')
+      };
+
+      var backCard = {
+        name: document.getElementById('backName'),
+        id: document.getElementById('backId'),
+        phone: document.getElementById('backPhone')
+      };
+
+      var photoInput = document.getElementById('photoInput');
+      var photoPreview = document.getElementById('photoPreview');
+      var photoPlaceholder = document.getElementById('photoPlaceholder');
+      var downloadBtn = document.getElementById('downloadBtn');
+      var frontPdfBtn = document.getElementById('frontPdfBtn');
+      var backPdfBtn = document.getElementById('backPdfBtn');
+      var employeeForm = document.getElementById('employeeForm');
+      var statusText = document.getElementById('statusText');
+      var templateImage = new Image();
+      templateImage.src = 'reference-card.jpg';
+
+      function valueOrFallback(input, fallback) {
+        var value = input.value.replace(/\s+/g, ' ').trim();
+        return value || fallback;
+      }
+
+      function updateCard() {
+        card.name.textContent = valueOrFallback(fields.name, 'AYAZ HUSSAIN SHAH');
+        card.id.textContent = valueOrFallback(fields.id, '27744');
+        card.dept.textContent = valueOrFallback(fields.dept, 'OPERATIONS');
+        card.role.textContent = valueOrFallback(fields.role, 'COD MANAGER');
+        card.cnic.textContent = valueOrFallback(fields.cnic, '37106-0184546-5');
+        card.phone.textContent = valueOrFallback(fields.phone, '-');
+        card.joining.textContent = valueOrFallback(fields.joining, '12-17-2021');
+        backCard.name.textContent = card.name.textContent;
+        backCard.id.textContent = card.id.textContent;
+        backCard.phone.textContent = card.phone.textContent;
+      }
+
+      function setStatus(message, isError) {
+        statusText.textContent = message;
+        statusText.style.color = isError ? '#a92828' : '#287442';
+      }
+
+      Object.keys(fields).forEach(function (key) {
+        fields[key].addEventListener('input', updateCard);
+        fields[key].addEventListener('change', updateCard);
+      });
+
+      photoInput.addEventListener('change', function () {
+        var file = photoInput.files && photoInput.files[0];
+        if (!file) {
+          photoPreview.removeAttribute('src');
+          photoPreview.style.display = 'none';
+          photoPlaceholder.style.display = 'block';
+          return;
+        }
+
+        if (!file.type.match(/^image\//)) {
+          setStatus('Please image file select karein.', true);
+          photoInput.value = '';
+          return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          photoPreview.src = event.target.result;
+          photoPreview.style.display = 'block';
+          photoPlaceholder.style.display = 'none';
+          setStatus('Photo card par lag gayi hai.', false);
         };
-
-        let state = {
-            currentFile: null,
-            isAdmin: false,
-            hasPermission: localStorage.getItem('lumina_access') === 'true'
+        reader.onerror = function () {
+          setStatus('Photo read nahi ho saki. Dusri image try karein.', true);
         };
+        reader.readAsDataURL(file);
+      });
 
-        // Initialize UI
-        function init() {
-            if (state.hasPermission) {
-                elements.adminToggleBtn.classList.remove('hidden');
-            }
-            updateStorageInfo();
-        }
-        init();
+      employeeForm.addEventListener('reset', function () {
+        window.setTimeout(function () {
+          updateCard();
+          photoPreview.removeAttribute('src');
+          photoPreview.style.display = 'none';
+          photoPlaceholder.style.display = 'block';
+          setStatus('', false);
+        }, 0);
+      });
 
-        // Mobile Nav Toggle
-        elements.mobileNavToggle.addEventListener('click', () => {
-            elements.sidebarNav.classList.toggle('-translate-x-full');
-        });
+      function drawRoundedRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+      }
 
-        // Drag & Drop
-        elements.dropZone.addEventListener('dragover', (e) => { e.preventDefault(); elements.dropZone.classList.add('active-drop-zone'); });
-        elements.dropZone.addEventListener('dragleave', () => elements.dropZone.classList.remove('active-drop-zone'));
-        elements.dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            elements.dropZone.classList.remove('active-drop-zone');
-            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-        });
+      function fitText(ctx, text, maxWidth, maxSize, minSize, fontWeight) {
+        var size = maxSize;
+        do {
+          ctx.font = fontWeight + ' ' + size + 'px Arial';
+          if (ctx.measureText(text).width <= maxWidth || size <= minSize) {
+            return size;
+          }
+          size -= 1;
+        } while (size >= minSize);
+        return minSize;
+      }
 
-        document.getElementById('choose-file-trigger').addEventListener('click', () => {
-            if (!state.hasPermission) elements.permissionModal.classList.remove('hidden');
-            else elements.fileInput.click();
-        });
+      function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+        var words = text.split(' ');
+        var line = '';
+        var lines = [];
 
-        elements.fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) handleFile(e.target.files[0]);
-        });
-
-        function handleFile(file) {
-            state.currentFile = file;
-            elements.heroSection.classList.add('hidden');
-            elements.previewSection.classList.remove('hidden');
-            elements.originalPreview.innerHTML = '';
-            elements.enhancedPreview.innerHTML = '<div id="enhanced-placeholder" class="text-center"><div class="loading-spinner hidden w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div><p class="status-text text-emerald-600 font-medium">Waiting for AI Boost</p></div>';
-            elements.downloadBtn.classList.add('hidden');
-            elements.sliderRoot.classList.add('hidden');
-            
-            const url = URL.createObjectURL(file);
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img');
-                img.src = url;
-                img.className = 'max-h-full w-full object-contain';
-                elements.originalPreview.appendChild(img);
-            } else {
-                const video = document.createElement('video');
-                video.src = url;
-                video.controls = true;
-                video.className = 'w-full h-full object-contain';
-                elements.originalPreview.appendChild(video);
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        for (var i = 0; i < words.length; i += 1) {
+          var testLine = line ? line + ' ' + words[i] : words[i];
+          if (ctx.measureText(testLine).width > maxWidth && line) {
+            lines.push(line);
+            line = words[i];
+          } else {
+            line = testLine;
+          }
         }
 
-        // AI Processing Logic
-        elements.processBtn.addEventListener('click', async () => {
-            if (!state.currentFile) return;
-            
-            elements.processBtn.disabled = true;
-            elements.processBtn.innerHTML = 'AI Processing... <i class="fas fa-microchip animate-pulse ml-3"></i>';
-            const placeholder = document.getElementById('enhanced-placeholder');
-            placeholder.querySelector('.loading-spinner').classList.remove('hidden');
-            placeholder.querySelector('.status-text').innerText = "8K AI Reconstruction...";
-
-            // Simulate AI Delay
-            await new Promise(r => setTimeout(r, 2000));
-
-            const url = URL.createObjectURL(state.currentFile);
-            
-            try {
-                if (state.currentFile.type.startsWith('image/')) {
-                    processImage(url);
-                } else {
-                    processVideo(url);
-                }
-            } catch (err) {
-                console.error("Enhancement failed", err);
-                elements.processBtn.disabled = false;
-                elements.processBtn.innerHTML = 'Enhance Now <i class="fas fa-magic ml-3"></i>';
-            }
-        });
-
-        function processImage(url) {
-            const img = new Image();
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
-                // Ultra HD Upscaling Logic
-                const scale = 4; // Increased scale for better pixel density (8K simulation)
-                canvas.width = img.width * scale;
-                canvas.height = img.height * scale;
-                
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-                
-                // Ultra HD Enhancement Filters
-                ctx.filter = 'contrast(1.1) saturate(1.3) brightness(1.02)';
-                
-                // Render the enhanced frames
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                
-                const dataUrl = canvas.toDataURL('image/jpeg', 1.0); // Maximum quality output
-                
-                // Show Slider for Interactive Comparison
-                elements.sliderRoot.classList.remove('hidden');
-                elements.laserLine.classList.remove('hidden');
-                
-                // Stop scanning line after 2 seconds of showing result
-                setTimeout(() => elements.laserLine.classList.add('hidden'), 4000);
-
-                // Show and Update Static Side-by-Side Preview (Alg Alg Formate)
-                const staticEnhancedImg = document.createElement('img');
-                staticEnhancedImg.src = dataUrl;
-                staticEnhancedImg.className = 'w-full h-full object-contain';
-                elements.enhancedPreview.innerHTML = '';
-                elements.enhancedPreview.appendChild(staticEnhancedImg);
-
-                elements.afterView.style.backgroundImage = `url(${dataUrl})`;
-                elements.afterView.style.backgroundSize = 'contain';
-                elements.afterView.style.backgroundPosition = 'center';
-                elements.afterView.style.backgroundRepeat = 'no-repeat';
-
-                elements.beforeView.querySelector('div').style.backgroundImage = `url(${url})`;
-                elements.beforeView.querySelector('div').style.backgroundSize = 'contain';
-                elements.beforeView.querySelector('div').style.backgroundPosition = 'center';
-                elements.beforeView.querySelector('div').style.backgroundRepeat = 'no-repeat';
-
-                elements.downloadBtn.href = dataUrl;
-                elements.downloadBtn.download = `8K_Enhanced_${state.currentFile.name}`;
-                elements.downloadBtn.classList.remove('hidden');
-                elements.processBtn.classList.add('hidden');
-
-                initSlider();
-                saveToLibrary(dataUrl);
-            };
-            img.src = url;
+        if (line) {
+          lines.push(line);
         }
 
-        function processVideo(url) {
-            elements.enhancedPreview.innerHTML = '';
-            const video = document.createElement('video');
-            video.src = url;
-            video.controls = true;
-            video.className = 'w-full h-full object-contain brightness-110 contrast-110';
-            elements.enhancedPreview.appendChild(video);
-            elements.downloadBtn.classList.remove('hidden');
-            elements.processBtn.classList.add('hidden');
+        lines = lines.slice(0, maxLines);
+        for (var j = 0; j < lines.length; j += 1) {
+          ctx.fillText(lines[j], x, y + (j * lineHeight));
+        }
+      }
+
+      function drawCoverImage(ctx, image, x, y, width, height) {
+        var sourceRatio = image.naturalWidth / image.naturalHeight;
+        var targetRatio = width / height;
+        var sx = 0;
+        var sy = 0;
+        var sw = image.naturalWidth;
+        var sh = image.naturalHeight;
+
+        if (sourceRatio > targetRatio) {
+          sw = image.naturalHeight * targetRatio;
+          sx = (image.naturalWidth - sw) / 2;
+        } else {
+          sh = image.naturalWidth / targetRatio;
+          sy = (image.naturalHeight - sh) / 2;
         }
 
-        // Slider Logic
-        function initSlider() {
-            let isDragging = false;
-            const move = (e) => {
-                if (!isDragging) return;
-                const rect = elements.sliderRoot.getBoundingClientRect();
-                let x = (e.pageX || e.touches[0].pageX) - rect.left;
-                x = Math.max(0, Math.min(x, rect.width));
-                let percent = (x / rect.width) * 100;
-                elements.sliderLine.style.left = percent + '%';
-                elements.beforeView.style.width = percent + '%';
-            };
+        ctx.drawImage(image, sx, sy, sw, sh, x, y, width, height);
+      }
 
-            elements.sliderLine.addEventListener('mousedown', () => isDragging = true);
-            window.addEventListener('mouseup', () => isDragging = false);
-            window.addEventListener('mousemove', move);
-            // Touch support
-            elements.sliderLine.addEventListener('touchstart', () => isDragging = true);
-            window.addEventListener('touchend', () => isDragging = false);
-            window.addEventListener('touchmove', move);
+      function drawLeopardPicture(ctx, x, y, width, height, large) {
+        var gradient = ctx.createLinearGradient(x, y, x + width, y + height);
+        gradient.addColorStop(0, '#fff0a8');
+        gradient.addColorStop(0.5, '#ffc400');
+        gradient.addColorStop(1, '#473005');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x, y, width, height);
+
+        ctx.fillStyle = '#111111';
+        ctx.globalAlpha = 0.94;
+        var spots = [
+          [x + width * 0.12, y + height * 0.25, large ? 9 : 6],
+          [x + width * 0.24, y + height * 0.68, large ? 7 : 4],
+          [x + width * 0.40, y + height * 0.30, large ? 8 : 5],
+          [x + width * 0.62, y + height * 0.68, large ? 9 : 5],
+          [x + width * 0.86, y + height * 0.28, large ? 8 : 6]
+        ];
+        for (var i = 0; i < spots.length; i += 1) {
+          ctx.beginPath();
+          ctx.arc(spots[i][0], spots[i][1], spots[i][2], 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = 'rgba(17, 17, 17, 0.17)';
+        ctx.beginPath();
+        ctx.moveTo(x, y + height * 0.78);
+        ctx.bezierCurveTo(x + width * 0.22, y + height * 0.47, x + width * 0.36, y + height * 0.58, x + width * 0.52, y + height * 0.68);
+        ctx.bezierCurveTo(x + width * 0.70, y + height * 0.82, x + width * 0.84, y + height * 0.38, x + width, y + height * 0.25);
+        ctx.lineTo(x + width, y + height);
+        ctx.lineTo(x, y + height);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.save();
+        ctx.translate(x + width * (large ? 0.04 : 0.08), y + height * (large ? 0.22 : 0.24));
+        ctx.scale(width / (large ? 390 : 360), height / (large ? 218 : 96));
+        ctx.fillStyle = '#111111';
+        ctx.beginPath();
+        ctx.ellipse(190, large ? 82 : 40, large ? 120 : 84, large ? 38 : 27, -0.05, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(292, large ? 50 : 24, large ? 31 : 22, large ? 27 : 19, -0.15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillRect(112, large ? 104 : 58, large ? 16 : 12, large ? 55 : 28);
+        ctx.fillRect(176, large ? 110 : 59, large ? 15 : 12, large ? 50 : 27);
+        ctx.fillRect(247, large ? 103 : 57, large ? 15 : 12, large ? 58 : 30);
+        ctx.fillRect(326, large ? 76 : 48, large ? 13 : 10, large ? 82 : 35);
+        ctx.beginPath();
+        ctx.ellipse(64, large ? 90 : 50, large ? 64 : 42, large ? 8 : 6, -0.28, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffc400';
+        var markY = large ? 72 : 35;
+        ctx.beginPath(); ctx.arc(146, markY, large ? 6 : 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(184, markY - 8, large ? 5 : 3, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(222, markY + 4, large ? 6 : 4, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(268, markY + 15, large ? 5 : 3, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+
+      function renderCardCanvas() {
+        var scale = 3;
+        var width = 390;
+        var height = 610;
+        var canvas = document.createElement('canvas');
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.scale(scale, scale);
+
+        ctx.fillStyle = '#ffffff';
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.fill();
+
+        ctx.save();
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.clip();
+
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(0, 0, width, 192);
+        ctx.fillStyle = '#ffc400';
+        ctx.beginPath();
+        ctx.moveTo(258, 0);
+        ctx.lineTo(width, 0);
+        ctx.lineTo(width, 74);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#ffc400';
+        drawRoundedRect(ctx, 256, 18, 92, 28, 14);
+        ctx.fill();
+        ctx.fillStyle = '#111111';
+        ctx.font = '900 11px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('STAFF ID', 302, 36);
+        drawRoundedRect(ctx, 16, 82, 358, 96, 14);
+        ctx.save();
+        drawRoundedRect(ctx, 16, 82, 358, 96, 14);
+        ctx.clip();
+        drawLeopardPicture(ctx, 16, 82, 358, 96, false);
+        ctx.restore();
+
+        ctx.fillStyle = '#ffffff';
+        drawRoundedRect(ctx, 22, 24, 42, 42, 7);
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#111111';
+        ctx.stroke();
+        ctx.fillStyle = '#111111';
+        ctx.font = '900 22px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('L', 43, 52);
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 20px Arial';
+        ctx.fillText('LEOPARDS', 74, 52);
+        ctx.fillStyle = '#ffc400';
+        ctx.font = '900 12px Arial';
+        ctx.fillText('COURIER SERVICES', 24, 96);
+
+        ctx.fillStyle = '#ffffff';
+        drawRoundedRect(ctx, 126, 132, 138, 156, 12);
+        ctx.fill();
+        ctx.save();
+        drawRoundedRect(ctx, 131, 137, 128, 146, 8);
+        ctx.clip();
+        ctx.fillStyle = '#f4f6f9';
+        ctx.fillRect(131, 137, 128, 146);
+        if (photoPreview.src) {
+          drawCoverImage(ctx, photoPreview, 131, 137, 128, 146);
+        } else {
+          ctx.fillStyle = '#6c7583';
+          ctx.font = '700 15px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('Upload', 195, 203);
+          ctx.fillText('Photo', 195, 223);
+        }
+        ctx.restore();
+
+        var name = card.name.textContent.toUpperCase();
+        var role = card.role.textContent.toUpperCase();
+        ctx.fillStyle = '#111111';
+        var nameSize = fitText(ctx, name, 330, 28, 17, '900');
+        ctx.font = '900 ' + nameSize + 'px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(name, 195, 336);
+
+        ctx.fillStyle = '#d29d00';
+        var roleSize = fitText(ctx, role, 310, 15, 11, '900');
+        ctx.font = '900 ' + roleSize + 'px Arial';
+        ctx.fillText(role, 195, 360);
+
+        ctx.fillStyle = '#111111';
+        drawRoundedRect(ctx, 135, 371, 120, 26, 13);
+        ctx.fill();
+        ctx.fillStyle = '#ffc400';
+        ctx.font = '900 11px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('VALID EMPLOYEE', 195, 388);
+
+        var rows = [
+          ['ID No', card.id.textContent],
+          ['Dept', card.dept.textContent],
+          ['Blood', card.blood.textContent],
+          ['Phone', card.phone.textContent],
+          ['Branch', card.address.textContent]
+        ];
+
+        ctx.textAlign = 'left';
+        var rowY = 418;
+        for (var i = 0; i < rows.length; i += 1) {
+          ctx.strokeStyle = '#eef1f5';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(28, rowY + 20);
+          ctx.lineTo(362, rowY + 20);
+          ctx.stroke();
+
+          ctx.fillStyle = '#687386';
+          ctx.font = '900 12px Arial';
+          ctx.fillText(rows[i][0].toUpperCase(), 28, rowY);
+
+          ctx.fillStyle = '#172033';
+          ctx.font = '700 14px Arial';
+          drawWrappedText(ctx, rows[i][1], 128, rowY, 220, 17, i === 4 ? 2 : 1);
+          rowY += i === 4 ? 30 : 28;
         }
 
-        // Library & Permission
-        document.getElementById('allow-btn').addEventListener('click', () => {
-            state.hasPermission = true;
-            localStorage.setItem('lumina_access', 'true');
-            elements.permissionModal.classList.add('hidden');
-            elements.bulkInput.click();
-        });
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(0, 552, width, 58);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 13px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('www.leopardscourier.com | Authorized Employee', 195, 587);
 
-        elements.bulkInput.addEventListener('change', async (e) => {
-            elements.syncOverlay.classList.remove('hidden');
-            try {
-                for (const file of Array.from(e.target.files)) {
-                    await new Promise(resolve => {
-                        const reader = new FileReader();
-                        reader.onload = (ev) => {
-                            saveToLibrary(ev.target.result, true);
-                            resolve();
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                }
-            } finally {
-                elements.syncOverlay.classList.add('hidden');
-                elements.adminToggleBtn.classList.remove('hidden');
-                alert("Library Synced! You can now choose a photo to enhance.");
-            }
-        });
+        ctx.restore();
+        return canvas;
+      }
 
-        function saveToLibrary(dataUrl, isBulk = false) {
-            try {
-                let logs = JSON.parse(localStorage.getItem('lumina_logs') || '[]');
-                logs.unshift(dataUrl);
-                if (logs.length > 50) logs.pop();
-                localStorage.setItem('lumina_logs', JSON.stringify(logs));
-                updateStorageInfo();
-                if (state.isAdmin) loadLibrary();
-            } catch (err) {
-                console.warn("Storage limit reached");
-            }
+      function renderBackCardCanvas() {
+        var scale = 3;
+        var width = 390;
+        var height = 610;
+        var canvas = document.createElement('canvas');
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.scale(scale, scale);
+
+        ctx.fillStyle = '#10131a';
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.fill();
+        ctx.save();
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.clip();
+
+        ctx.fillStyle = '#151b25';
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = 'rgba(255, 196, 0, 0.18)';
+        ctx.beginPath();
+        ctx.arc(70, 112, 48, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255, 196, 0, 0.12)';
+        ctx.beginPath();
+        ctx.arc(330, 486, 58, 0, Math.PI * 2);
+        ctx.fill();
+
+        drawLeopardPicture(ctx, 0, 0, width, 218, true);
+
+        ctx.fillStyle = '#ffffff';
+        drawRoundedRect(ctx, 28, 238, 42, 42, 7);
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#111111';
+        ctx.stroke();
+        ctx.fillStyle = '#111111';
+        ctx.font = '900 22px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('L', 49, 266);
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#ffc400';
+        ctx.font = '900 23px Arial';
+        ctx.fillText('LEOPARDS', 82, 266);
+
+        ctx.fillStyle = '#dfe6f0';
+        ctx.font = '400 14px Arial';
+        drawWrappedText(ctx, 'This card is property of Leopards Courier Services. If found, please return it to the nearest branch.', 28, 315, 334, 20, 3);
+
+        var rows = [
+          ['Employee', backCard.name.textContent],
+          ['ID Number', backCard.id.textContent],
+          ['Emergency / Branch', backCard.phone.textContent]
+        ];
+        var y = 392;
+        for (var i = 0; i < rows.length; i += 1) {
+          ctx.fillStyle = '#99a4b5';
+          ctx.font = '900 11px Arial';
+          ctx.fillText(rows[i][0].toUpperCase(), 28, y);
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '800 15px Arial';
+          drawWrappedText(ctx, rows[i][1], 28, y + 20, 320, 18, 1);
+          y += 52;
         }
 
-        function updateStorageInfo() {
-            const size = new Blob([localStorage.getItem('lumina_logs') || '']).size;
-            const percent = Math.min((size / (5 * 1024 * 1024)) * 100, 100);
-            elements.storageBar.style.width = percent + '%';
+        ctx.strokeStyle = '#ffc400';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(28, 532);
+        ctx.lineTo(190, 532);
+        ctx.stroke();
+        ctx.fillStyle = '#ffc400';
+        ctx.font = '900 12px Arial';
+        ctx.fillText('AUTHORIZED SIGNATURE', 28, 552);
+
+        ctx.fillStyle = '#ffffff';
+        for (var b = 0; b < 28; b += 1) {
+          var barWidth = b % 5 === 0 ? 5 : (b % 3 === 0 ? 3 : 2);
+          ctx.fillRect(225 + (b * 5), 512, barWidth, 48);
         }
 
-        function loadLibrary() {
-            elements.galleryGrid.innerHTML = '';
-            const logs = JSON.parse(localStorage.getItem('lumina_logs') || '[]');
-            logs.forEach((url, i) => {
-                const div = document.createElement('div');
-                div.className = 'group relative aspect-square glass-card rounded-2xl overflow-hidden border border-white/5';
-                div.innerHTML = `
-                    <img src="${url}" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
-                        <a href="${url}" download="saved_asset.jpg" class="p-2 bg-indigo-600 rounded-lg text-xs"><i class="fas fa-download"></i></a>
-                        <button onclick="deleteAsset(${i})" class="p-2 bg-red-600 rounded-lg text-xs"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                elements.galleryGrid.appendChild(div);
-            });
+        ctx.restore();
+        return canvas;
+      }
+
+      function dataUrlToBinary(dataUrl) {
+        var base64 = dataUrl.split(',')[1];
+        var raw = atob(base64);
+        var bytes = new Uint8Array(raw.length);
+        for (var i = 0; i < raw.length; i += 1) {
+          bytes[i] = raw.charCodeAt(i);
+        }
+        return bytes;
+      }
+
+      function asciiBytes(text) {
+        var bytes = new Uint8Array(text.length);
+        for (var i = 0; i < text.length; i += 1) {
+          bytes[i] = text.charCodeAt(i) & 255;
+        }
+        return bytes;
+      }
+
+      function concatBytes(parts) {
+        var total = 0;
+        for (var i = 0; i < parts.length; i += 1) {
+          total += parts[i].length;
+        }
+        var output = new Uint8Array(total);
+        var offset = 0;
+        for (var j = 0; j < parts.length; j += 1) {
+          output.set(parts[j], offset);
+          offset += parts[j].length;
+        }
+        return output;
+      }
+
+      function makePdfFromJpegs(jpegList, width, height) {
+        var parts = [asciiBytes('%PDF-1.4\n')];
+        var offsets = [0];
+        var currentOffset = parts[0].length;
+        var totalObjects = 2 + (jpegList.length * 3);
+        var kids = [];
+
+        function addBytes(bytes) {
+          parts.push(bytes);
+          currentOffset += bytes.length;
         }
 
-        window.deleteAsset = (i) => {
-            let logs = JSON.parse(localStorage.getItem('lumina_logs') || '[]');
-            logs.splice(i, 1);
-            localStorage.setItem('lumina_logs', JSON.stringify(logs));
-            loadLibrary();
-        };
+        function addObject(id, body) {
+          offsets[id] = currentOffset;
+          addBytes(asciiBytes(id + ' 0 obj\n' + body + '\nendobj\n'));
+        }
 
-        // Admin Toggle
-        elements.brandLogo.addEventListener('click', () => {
-            if(state.hasPermission) elements.adminToggleBtn.classList.toggle('hidden');
-        });
+        function addImageObject(id, bytes) {
+          offsets[id] = currentOffset;
+          addBytes(asciiBytes(id + ' 0 obj\n<< /Type /XObject /Subtype /Image /Width ' + width + ' /Height ' + height + ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + bytes.length + ' >>\nstream\n'));
+          addBytes(bytes);
+          addBytes(asciiBytes('\nendstream\nendobj\n'));
+        }
 
-        elements.adminToggleBtn.addEventListener('click', () => {
-            if (!state.isAdmin) {
-                const pass = prompt("Enter Admin Key:");
-                if (pass === "1234") {
-                    state.isAdmin = true;
-                    elements.adminGallerySection.classList.remove('hidden');
-                    elements.heroSection.classList.add('hidden');
-                    elements.adminToggleBtn.innerText = "Exit Dashboard";
-                    loadLibrary();
-                }
-            } else {
-                state.isAdmin = false;
-                elements.adminGallerySection.classList.add('hidden');
-                elements.heroSection.classList.remove('hidden');
-                elements.adminToggleBtn.innerHTML = '<i class="fas fa-database mr-2"></i> Dashboard';
-            }
-        });
+        for (var p = 0; p < jpegList.length; p += 1) {
+          kids.push((3 + (p * 3)) + ' 0 R');
+        }
 
-        document.getElementById('clear-logs-btn').addEventListener('click', () => {
-            if(confirm("Wipe library?")) {
-                localStorage.removeItem('lumina_logs');
-                loadLibrary();
-                updateStorageInfo();
-            }
-        });
-    </script>
+        addObject(1, '<< /Type /Catalog /Pages 2 0 R >>');
+        addObject(2, '<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + jpegList.length + ' >>');
+
+        for (var i = 0; i < jpegList.length; i += 1) {
+          var pageId = 3 + (i * 3);
+          var imageId = pageId + 1;
+          var contentId = pageId + 2;
+          var contentStream = 'q\n' + width + ' 0 0 ' + height + ' 0 0 cm\n/Im' + i + ' Do\nQ\n';
+          addObject(pageId, '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + width + ' ' + height + '] /Resources << /XObject << /Im' + i + ' ' + imageId + ' 0 R >> >> /Contents ' + contentId + ' 0 R >>');
+          addImageObject(imageId, jpegList[i]);
+          addObject(contentId, '<< /Length ' + contentStream.length + ' >>\nstream\n' + contentStream + 'endstream');
+        }
+
+        var xrefOffset = currentOffset;
+        var xref = 'xref\n0 ' + (totalObjects + 1) + '\n0000000000 65535 f \n';
+        for (var k = 1; k <= totalObjects; k += 1) {
+          xref += String(offsets[k]).padStart(10, '0') + ' 00000 n \n';
+        }
+        xref += 'trailer\n<< /Size ' + (totalObjects + 1) + ' /Root 1 0 R >>\nstartxref\n' + xrefOffset + '\n%%EOF';
+        parts.push(asciiBytes(xref));
+
+        return new Blob([concatBytes(parts)], { type: 'application/pdf' });
+      }
+
+      function drawTemplateFront(ctx, width, height) {
+        ctx.fillStyle = '#f8f8f5';
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.fill();
+        ctx.save();
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.clip();
+
+        ctx.drawImage(templateImage, 48, 8, 545, 344, 0, 0, width, 246);
+        ctx.fillStyle = '#fbfbf8';
+        ctx.fillRect(0, 246, width, 262);
+        ctx.fillStyle = 'rgba(210, 210, 205, 0.16)';
+        ctx.font = '900 118px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('LCS', 195, 438);
+        ctx.drawImage(templateImage, 48, 718, 545, 89, 0, 508, width, 64);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(195, 243, 83, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#efb300';
+        ctx.stroke();
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(195, 243, 78, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.fillStyle = '#f4f4f2';
+        ctx.fillRect(117, 165, 156, 156);
+        if (photoPreview.src) {
+          drawCoverImage(ctx, photoPreview, 117, 165, 156, 156);
+        } else {
+          ctx.fillStyle = '#777';
+          ctx.font = '700 15px Arial';
+          ctx.fillText('Upload', 195, 238);
+          ctx.fillText('Photo', 195, 258);
+        }
+        ctx.restore();
+
+        var name = card.name.textContent.toUpperCase();
+        var role = card.role.textContent.toUpperCase();
+        ctx.fillStyle = '#070707';
+        var nameSize = fitText(ctx, name, 320, 23, 15, '900');
+        ctx.font = '900 ' + nameSize + 'px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(name, 195, 348);
+
+        ctx.fillStyle = '#d5a600';
+        var roleSize = fitText(ctx, role, 210, 13, 10, '900');
+        ctx.font = '900 ' + roleSize + 'px Arial';
+        ctx.fillText(role, 195, 368);
+
+        var rows = [
+          ['Department', card.dept.textContent],
+          ['Employee ID', card.id.textContent],
+          ['CNIC', card.cnic.textContent],
+          ['Phone', card.phone.textContent],
+          ['Date of Joining', card.joining.textContent]
+        ];
+        ctx.textAlign = 'left';
+        var y = 402;
+        for (var i = 0; i < rows.length; i += 1) {
+          ctx.fillStyle = '#111';
+          ctx.font = '400 14px Arial';
+          ctx.fillText(rows[i][0], 92, y);
+          ctx.font = '700 14px Arial';
+          ctx.fillText(':', 191, y);
+          ctx.font = '900 14px Arial';
+          ctx.fillText(rows[i][1], 212, y);
+          y += 22;
+        }
+
+        ctx.restore();
+      }
+
+      function renderCardCanvas() {
+        var scale = 8;
+        var width = 390;
+        var height = 572;
+        var canvas = document.createElement('canvas');
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.scale(scale, scale);
+        drawTemplateFront(ctx, width, height);
+        return canvas;
+      }
+
+      function renderBackCardCanvas() {
+        var scale = 8;
+        var width = 390;
+        var height = 572;
+        var canvas = document.createElement('canvas');
+        canvas.width = width * scale;
+        canvas.height = height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.scale(scale, scale);
+        ctx.fillStyle = '#f8f8f5';
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.fill();
+        ctx.save();
+        drawRoundedRect(ctx, 0, 0, width, height, 18);
+        ctx.clip();
+        ctx.drawImage(templateImage, 648, 8, 545, 799, 0, 0, width, height);
+        ctx.restore();
+        return canvas;
+      }
+
+      function savePdf(kind) {
+        try {
+          updateCard();
+
+          if (!templateImage.complete || !templateImage.naturalWidth) {
+            setStatus('Template image load ho rahi hai. 1 second baad dobara click karein.', true);
+            return;
+          }
+
+          var canvases = [];
+          if (kind === 'front' || kind === 'both') {
+            canvases.push(renderCardCanvas());
+          }
+          if (kind === 'back' || kind === 'both') {
+            canvases.push(renderBackCardCanvas());
+          }
+
+          var jpegBytes = canvases.map(function (canvas) {
+            return dataUrlToBinary(canvas.toDataURL('image/jpeg', 1));
+          });
+          var pdfBlob = makePdfFromJpegs(jpegBytes, canvases[0].width, canvases[0].height);
+          var link = document.createElement('a');
+          var safeName = card.name.textContent.trim().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'employee';
+          link.href = URL.createObjectURL(pdfBlob);
+          link.download = 'leopards-' + safeName.toLowerCase() + '-card-' + kind + '-hd.pdf';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.setTimeout(function () {
+            URL.revokeObjectURL(link.href);
+          }, 1000);
+          setStatus('HD PDF download ho gayi hai.', false);
+        } catch (error) {
+          setStatus('PDF download error: Chrome/Edge me file ko open karke dobara try karein.', true);
+        }
+      }
+
+      downloadBtn.addEventListener('click', function () {
+        savePdf('both');
+      });
+
+      frontPdfBtn.addEventListener('click', function () {
+        savePdf('front');
+      });
+
+      backPdfBtn.addEventListener('click', function () {
+        savePdf('back');
+      });
+
+      updateCard();
+    }());
+  </script>
 </body>
-
 </html>
